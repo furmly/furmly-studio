@@ -40,13 +40,17 @@
     "start": "webpack-dev-server --hot --host 0.0.0.0 --config=./webpack.dev.config.js --mode development",
     "build": "webpack --config webpack.build.config.js --mode production",
     "package": "npm run build",
-    "postpackage": "electron-packager ./ --out=./builds"
+    "postpackage": "electron-packager ./ --out=./builds --icon=./icon.ico",
+    "package:mac": "npm run build",
+    "postpackage:mac": "electron-packager ./ --out=./builds --icon=./icon.icns"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
     "config": "^2.0.1",
     "cookie-parser": "^1.4.3",
+    "debug": "^3.1.0",
     "electron": "^2.0.3",
+    "http-proxy": "^1.17.0",
     "jwt-decode": "^2.2.0",
     "react": "^16.4.1",
     "react-dom": "^16.4.1"

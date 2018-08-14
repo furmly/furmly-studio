@@ -4,6 +4,7 @@ const https = require("https");
 const jwtDecoder = require("jwt-decode");
 const config = require("../config");
 const fs = require("fs");
+const path = require("path");
 const bodyParser = require("body-parser").json();
 const cookieParser = require("cookie-parser")();
 const url = require("url");
@@ -213,8 +214,12 @@ class ProxyServer {
     });
     this.server = https.createServer(
       {
-        key: fs.readFileSync("./ssl/proxy-server-key.pem"),
-        cert: fs.readFileSync("./ssl/proxy-server-crt.pem")
+        key: fs.readFileSync(
+          path.join(__dirname, "../ssl/proxy-server-key.pem")
+        ),
+        cert: fs.readFileSync(
+          path.join(__dirname, "../ssl/proxy-server-crt.pem")
+        )
       },
       this.onRequest
     );

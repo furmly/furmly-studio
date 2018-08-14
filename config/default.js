@@ -1,12 +1,19 @@
 const env = require("./fromEnv");
+const path = require("path");
 module.exports = {
   app: {
     port: env("FURMLY_STUDIO_PORT", 3330),
-    sslFolder: env("FURMLY_SSL_FOLDER", "./ssl"),
+    sslFolder: env("FURMLY_SSL_FOLDER", path.join(__dirname, "../ssl")),
     certificatePath: env("FURMLY_STUDIO_CERTIFICATE_PATH", "superc-crt.pem"),
-    certificateKeyPath: env("FURMLY_STUDIO_CERTIFICATE_KEY_PATH", "superc-key.pem"),
+    certificateKeyPath: env(
+      "FURMLY_STUDIO_CERTIFICATE_KEY_PATH",
+      "superc-key.pem"
+    ),
     caCertificatePath: env("FURMLY_STUDIO_CA_CERTIFICATE_PATH", "ca-crt.pem"),
-    cookie_gen_password: env("FURMLY_STUDIO_COOKIE_GEN_SECRET", "alcoholinmyblood")
+    cookie_gen_password: env(
+      "FURMLY_STUDIO_COOKIE_GEN_SECRET",
+      "alcoholinmyblood"
+    )
   },
   furmly: {
     scheme: "https",
@@ -15,8 +22,14 @@ module.exports = {
     auth_path: "/auth/token",
     domain: "",
     client: {
-      clientId: env("FURMLY_STUDIO_CLIENT_ID", "n2wZASNunUShF2xQ0o4P44xImeSX6hlm"),
-      clientSecret: env("FURMLY_STUDIO_CLIENT_SECRET", "kLqqED9oQnlnRxSjJTQZmRwH4ZKekNNW")
+      clientId: env(
+        "FURMLY_STUDIO_CLIENT_ID",
+        "n2wZASNunUShF2xQ0o4P44xImeSX6hlm"
+      ),
+      clientSecret: env(
+        "FURMLY_STUDIO_CLIENT_SECRET",
+        "kLqqED9oQnlnRxSjJTQZmRwH4ZKekNNW"
+      )
     }
   }
 };

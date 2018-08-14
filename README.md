@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./src/assets/images/furmly_logo2.png" width="135" align="center">
+  <img src="./src/assets/images/logo.png" width="135" align="center">
   <br>
   <br>
 </p>
