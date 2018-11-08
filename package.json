@@ -50,6 +50,7 @@
     "cookie-parser": "^1.4.3",
     "debug": "^3.1.0",
     "electron": "^2.0.3",
+    "furmly-base-web": "^1.0.0",
     "http-proxy": "^1.17.0",
     "jwt-decode": "^2.2.0",
     "react": "^16.4.1",
