@@ -50,11 +50,16 @@
     "cookie-parser": "^1.4.3",
     "debug": "^3.1.0",
     "electron": "^2.0.3",
+    "electron-store": "^2.0.0",
     "furmly-base-web": "^1.0.0",
     "http-proxy": "^1.17.0",
     "jwt-decode": "^2.2.0",
     "react": "^16.4.1",
-    "react-dom": "^16.4.1"
+    "react-dom": "^16.4.1",
+    "react-redux": "^5.1.0",
+    "react-router-dom": "^4.3.1",
+    "redux": "^4.0.1",
+    "redux-persist-electron-storage": "^2.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
