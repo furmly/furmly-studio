@@ -11,8 +11,13 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.s*css$/,
-        use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader"],
+        test: /\.s?css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+          "postcss-loader",
+          "sass-loader"
+        ],
         include: defaultInclude
       },
       {

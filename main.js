@@ -101,7 +101,8 @@ app.on("activate", () => {
 const stopProxy = () => {
   if (
     proxyServer &&
-    (proxyServer.status == "STARTING" || proxyServer.status == "STARTED")
+    (proxyServer.status == proxyServer.STATUS.STARTING ||
+      proxyServer.status == proxyServer.status.STARTED)
   ) {
     proxyServer.stop();
     proxyServer = null;
@@ -116,7 +117,18 @@ ipcMain.on("start-proxy", (event, { connection, sslConfig }) => {
       sslConfig
     });
 
-  proxyServer.start();
+  proxyServer.start(er => {
+    if (er) {
+      return event.sender.send("start", "error:" + er.message);
+    }
+    return event.sender.send("start", "successful");
+  });
 });
 
 ipcMain.on("stop-proxy", stopProxy);
+
+ipcMain.on("status", event => {
+  const started =
+    (proxyServer && proxyServer.STATUS.STARTED == proxyServer.status) || false;
+  event.returnValue = started;
+});

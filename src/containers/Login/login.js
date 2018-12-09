@@ -1,22 +1,43 @@
 import React from "react";
-import { ipcRenderer } from "electron";
-import style from "./style.scss";
+import { Select, ThemeProvider, Input } from "furmly-base-web";
 
+import style from "./style.scss";
+const defaultTheme = {
+  labelBackgroundColor: "white",
+  formComponentBackgroundColor: "transparent",
+  labelColor: "black",
+  accentColor: "orange",
+  factor: 1.2,
+  modalBackgroundColor: "#ffd3d3",
+  errorColor: "#ab0101",
+  errorForeground: "white"
+};
 class Login extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { connection: "https://localhost:443" };
-    this.startProxy = this.startProxy.bind(this);
-    this.stopProxy = this.stopProxy.bind(this);
+    this.state = { username: "" };
   }
-  startProxy() {
-    ipcRenderer.send("start-proxy", Object.assign({}, this.state));
-  }
-  stopProxy() {
-    ipcRenderer.send("stop-proxy");
-  }
+
   render() {
-    return <div className={style.wrapper}>LOGIN</div>;
+    return (
+      <ThemeProvider theme={defaultTheme}>
+        <div className={style.loginPage}>
+          <div className={style.loginControl}>
+            <Input
+              value={this.state.username}
+              label="Username"
+              valueChanged={this.usernameChanged}
+            />
+            <Select
+              label="Gender"
+              items={[{ id: 1, t: "Something optional 1" }]}
+              keyProperty="id"
+              displayProperty="t"
+            />
+          </div>
+        </div>
+      </ThemeProvider>
+    );
   }
 }
 

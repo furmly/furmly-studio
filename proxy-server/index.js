@@ -151,14 +151,17 @@ class ProxyServer {
     request.end();
   }
 
-  stop() {
+  stop(callback) {
     debug("stopping proxy server");
-    if (this.started) {
-      this.server.close();
-    }
-    this.started = true;
-    this.status = STOPPED;
-    debug("server stopped");
+    if (!this.started) return callback();
+
+    this.server.close(er => {
+      if (er) return callback(er);
+      this.started = false;
+      this.status = STOPPED;
+      debug("server stopped");
+      return callback();
+    });
   }
 
   onRequest(req, res) {
@@ -200,7 +203,7 @@ class ProxyServer {
     });
   }
 
-  start() {
+  start(callback) {
     this.status = STARTING;
     this.proxy = httpProxy.createProxy({
       target: Object.assign({}, this.serverConfig.connection, {
@@ -229,17 +232,25 @@ class ProxyServer {
       debug(arguments);
     });
 
-    this.server.listen(this.proxyPort, () => {
+    this.server.listen(this.proxyPort, er => {
+      if (er) return callback(er);
       debug(
         `\n\n----------------- http proxy started on ${
           this.proxyPort
         }----------------`
       );
+      if (this.requestStop) {
+        this.server.close();
+        return callback(new Error("Stopped server abruptly"));
+      }
       this.started = true;
       this.status = STARTED;
-      if (this.requestStop) this.server.close();
     });
   }
 }
-
+ProxyServer.prototype.STATUS = {
+  STOPPED,
+  STARTED,
+  STARTING
+};
 module.exports = ProxyServer;
