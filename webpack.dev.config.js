@@ -13,7 +13,7 @@ const furmlyClient = path.resolve(
   "./node_modules/furmly-client/dist"
 );
 const furmlyFonts = furmly + "\\**.ttf";
-console.log(furmlyFonts);
+
 module.exports = {
   module: {
     rules: [
@@ -40,8 +40,7 @@ module.exports = {
                     cwd: "babelrc",
                     alias: {
                       error_handler: "./src/errorhandler.js",
-                      client_config: "./furmly-client.config.js",
-                      call_api: "./.storybook/dynamo_client_config/call_api.js"
+                      client_config: "./furmly-client.config.js"
                     }
                   }
                 ]
@@ -67,17 +66,22 @@ module.exports = {
   },
   target: "electron-renderer",
   plugins: [
-    new HtmlWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      title: "Furmly Studio"
+    }),
     new webpack.DefinePlugin({
       "process.env.NODE_ENV": JSON.stringify("development"),
       "process.env.NODE_CONFIG_DIR": JSON.stringify(
         __dirname + "/src/jadeconfig"
       )
     }),
-    new CopyPlugin([
-      { from: furmlyFonts, to: path.resolve(__dirname, "dist") }
-    ])
+    new CopyPlugin([{ from: furmlyFonts, to: path.resolve(__dirname, "dist") }])
   ],
+  resolve: {
+    alias: {
+      assets: path.resolve(__dirname, "src/assets/")
+    }
+  },
   devtool: "cheap-source-map",
   devServer: {
     contentBase: [path.resolve(__dirname, "dist"), furmly],

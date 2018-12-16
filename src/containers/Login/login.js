@@ -1,32 +1,38 @@
 import React from "react";
-import { Select, ThemeProvider, Input } from "furmly-base-web";
+import { Select, Input } from "furmly-base-web";
 
-import style from "./style.scss";
-const defaultTheme = {
-  labelBackgroundColor: "white",
-  formComponentBackgroundColor: "transparent",
-  labelColor: "black",
-  accentColor: "orange",
-  factor: 1.2,
-  modalBackgroundColor: "#ffd3d3",
-  errorColor: "#ab0101",
-  errorForeground: "white"
-};
+import "./style.scss";
+import "assets/styles/common.scss";
+import img from "assets/images/logo.png";
+
 class Login extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { username: "" };
+    this.state = { username: "", password: "" };
   }
-
+  usernameChanged = username => {
+    this.setState({ username });
+  };
+  passwordChanged = password => {
+    this.setState({ password });
+  };
   render() {
     return (
-      <ThemeProvider theme={defaultTheme}>
-        <div className={style.loginPage}>
-          <div className={style.loginControl}>
+      <div className={"loginPage"}>
+        <div className={"container card"}>
+          <div className={"decal"} />
+          <div className={"control"}>
+            <img height={120} src={img} />
             <Input
               value={this.state.username}
               label="Username"
               valueChanged={this.usernameChanged}
+            />
+            <Input
+              value={this.state.password}
+              label="Password"
+              type={"password"}
+              valueChanged={this.passwordChanged}
             />
             <Select
               label="Gender"
@@ -36,7 +42,7 @@ class Login extends React.Component {
             />
           </div>
         </div>
-      </ThemeProvider>
+      </div>
     );
   }
 }
