@@ -12,6 +12,10 @@ const furmlyClient = path.resolve(
   __dirname,
   "./node_modules/furmly-client/dist"
 );
+const furmlyClient2 = path.resolve(
+  __dirname,
+  "./node_modules/furmly-base-web/node_modules/furmly-client/dist"
+);
 const furmlyFonts = furmly + "\\**.ttf";
 
 module.exports = {
@@ -48,7 +52,13 @@ module.exports = {
             }
           }
         ],
-        include: [defaultInclude, configDir, furmlyClient, furmly]
+        include: [
+          defaultInclude,
+          configDir,
+          furmlyClient,
+          furmlyClient2,
+          furmly
+        ]
       },
       {
         test: /\.(jpe?g|png|gif)$/,

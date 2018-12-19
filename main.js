@@ -32,8 +32,6 @@ if (process.platform === "win32") {
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 1024,
-    height: 768,
     show: false
   });
 
@@ -60,6 +58,7 @@ function createWindow() {
   // Don't show until we are ready and loaded
   mainWindow.once("ready-to-show", () => {
     mainWindow.show();
+    mainWindow.maximize();
 
     // Open the DevTools automatically if developing
     if (dev) {
@@ -119,9 +118,16 @@ ipcMain.on("start-proxy", (event, { connection, sslConfig }) => {
 
   proxyServer.start(er => {
     if (er) {
-      return event.sender.send("start", "error:" + er.message);
+      return (event.returnValue = {
+        message: er.message,
+        started: proxyServer.started
+      });
+      // return event.sender.send("start", { message: "error:" + er.message });
     }
-    return event.sender.send("start", "successful");
+    return (event.returnValue = {
+      started: proxyServer.started
+    });
+    //event.sender.send("start", { message: "successful" });
   });
 });
 

@@ -57,7 +57,7 @@ class ProxyServer {
           username: req.body.username,
           password: req.body.password,
           grant_type: "password",
-          scope: "dynamo"
+          scope: "furmly"
         },
         req,
         res
@@ -245,6 +245,7 @@ class ProxyServer {
       }
       this.started = true;
       this.status = STARTED;
+      callback();
     });
   }
 }

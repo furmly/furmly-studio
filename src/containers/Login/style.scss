@@ -17,7 +17,7 @@
     align-items: center;
     .decal {
       flex: 0.7;
-      background-image: url(../../assets/images/decal2.jpg);
+      background-image: url(../../assets/images/decal.png);
       background-repeat: no-repeat;
       background-size: cover;
       height: 70vh;
@@ -31,6 +31,13 @@
       display: flex;
       img {
         align-self: center;
+      }
+      .select {
+        width: 70%;
+      }
+      .addButton {
+        width: 30%;
+        align-self: flex-end;
       }
     }
   }
