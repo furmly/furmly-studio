@@ -1,12 +1,11 @@
 "use strict";
 
 // Import parts of electron to use
-const { app, BrowserWindow, ipcMain } = require("electron");
-const ProxyServer = require("./proxy-server");
+const { app, BrowserWindow } = require("electron");
 const path = require("path");
 const url = require("url");
-
-let proxyServer;
+const Application = require("./app");
+const config = require("./config");
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
@@ -74,6 +73,18 @@ function createWindow() {
     mainWindow = null;
   });
 }
+const serverLocationEx = new RegExp(`https://localhost:${config.app.port}`);
+app.on(
+  "certificate-error",
+  (event, webContents, url, error, certificate, callback) => {
+    if (serverLocationEx.test(url)) {
+      event.preventDefault();
+      callback(true);
+    } else {
+      callback(false);
+    }
+  }
+);
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -97,44 +108,4 @@ app.on("activate", () => {
   }
 });
 
-const stopProxy = () => {
-  if (
-    proxyServer &&
-    (proxyServer.status == proxyServer.STATUS.STARTING ||
-      proxyServer.status == proxyServer.status.STARTED)
-  ) {
-    proxyServer.stop();
-    proxyServer = null;
-  }
-};
-
-ipcMain.on("start-proxy", (event, { connection, sslConfig }) => {
-  stopProxy();
-  if (!proxyServer)
-    proxyServer = new ProxyServer({
-      connection: url.parse(connection),
-      sslConfig
-    });
-
-  proxyServer.start(er => {
-    if (er) {
-      return (event.returnValue = {
-        message: er.message,
-        started: proxyServer.started
-      });
-      // return event.sender.send("start", { message: "error:" + er.message });
-    }
-    return (event.returnValue = {
-      started: proxyServer.started
-    });
-    //event.sender.send("start", { message: "successful" });
-  });
-});
-
-ipcMain.on("stop-proxy", stopProxy);
-
-ipcMain.on("status", event => {
-  const started =
-    (proxyServer && proxyServer.STATUS.STARTED == proxyServer.status) || false;
-  event.returnValue = started;
-});
+new Application().init();

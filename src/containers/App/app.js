@@ -14,7 +14,7 @@ const defaultTheme = {
   inputColor: "white",
   accentColor: "orange",
   factor: 1.2,
-  modalBackgroundColor: " rgb(40, 39, 64)",
+  modalBackgroundColor: "rgb(40, 39, 64)",
   errorColor: "#ab0101",
   errorForeground: "white"
 };

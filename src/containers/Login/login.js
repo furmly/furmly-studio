@@ -1,18 +1,26 @@
 import React from "react";
 import { Select, Input, Button, FormContainer, Modal } from "furmly-base-web";
 import { ipcRenderer } from "electron";
+import PropTypes from "prop-types";
 import "assets/styles/common.scss";
 import img from "assets/images/logo.svg";
-
 import "./style.scss";
-
 import ManageServers, { SERVER } from "./manage-servers";
 import preferences from "../../preferences";
 import client from "../../client";
+import Dispatcher from "../../../dispatcher";
+import ipcConstants from "../../ipcConstants";
+import { CREDENTIALS } from "../../constants";
+import { ipcSend } from "../../util";
 
 class Login extends React.Component {
   constructor(props) {
     super(props);
+    this.dispatcher = new Dispatcher(
+      ipcRenderer,
+      [ipcConstants.START_PROXY],
+      ipcSend
+    );
     this.state = {
       serverDialogOpen: false,
       username: "",
@@ -40,19 +48,26 @@ class Login extends React.Component {
       servers: preferences.getObj(SERVER)
     });
   };
-  doLogin = async () => {
-    try {
-      const { started } = ipcRenderer.sendSync("start-proxy", {
+  doLogin = () => {
+    this.dispatcher.send(
+      ipcConstants.START_PROXY,
+      {
         connection: this.state.server
-      });
-      const { username, password } = this.state;
-      if (started) {
-        const result = await client.doLogin({ username, password });
-        window.alert(JSON.stringify(result, null, " "));
+      },
+      async (sender, { started, er }) => {
+        try {
+          if (er) return this.setState({ error: er });
+          const { username, password } = this.state;
+          if (started) {
+            const result = await client.doLogin({ username, password });
+            preferences.set(CREDENTIALS, result);
+            this.props.history.push("/home");
+          }
+        } catch (e) {
+          this.setState({ error: e.message });
+        }
       }
-    } catch (e) {
-      window.alert(e.message);
-    }
+    );
   };
   render() {
     return (
@@ -106,4 +121,7 @@ class Login extends React.Component {
   }
 }
 
+Login.propTypes = {
+  history: PropTypes.object
+};
 export default Login;

@@ -44,6 +44,7 @@ class ManageServers extends React.Component {
       this.store
     );
   };
+  rowClicked = () => {};
   render() {
     return (
       <div className={"manageServers"}>
@@ -72,7 +73,7 @@ class ManageServers extends React.Component {
           <List
             items={this.state.uris}
             rowTemplate={rowTemplate}
-            rowClicked={() => {}}
+            rowClicked={this.rowClicked}
             rowRemoved={this.removeUri}
           />
         </FormContainer>
