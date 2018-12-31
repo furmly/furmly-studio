@@ -8,11 +8,9 @@ const Dispatcher = require("../dispatcher");
 const fs = require("fs");
 const path = require("path");
 const bodyParser = require("body-parser").json();
-const cookieParser = require("cookie-parser")();
 const url = require("url");
-const { generateUniqueID, cors, sendError } = require("./utils");
+const { cors, sendError } = require("./utils");
 const constants = require("./constants");
-let store = {};
 const STOPPED = "STOPPED";
 const STARTED = "STARTED";
 const STARTING = "STARTING";
@@ -26,8 +24,6 @@ class ProxyServer {
 
   login(req, res) {
     bodyParser(req, res, () => {
-      store = {};
-      res.setHeader("Set-Cookie", "_id=invalid;HttpOnly;Path=/");
       this._getToken.call(
         this,
         {
@@ -73,19 +69,17 @@ class ProxyServer {
     };
   }
   refreshToken(req, res) {
-    cookieParser(req, res, () => {
-      if (req.cookies && store[req.cookies._id])
-        this._getToken.call(
-          this,
-          {
-            refresh_token: store[req.cookies._id].refresh_token,
-            grant_type: "refresh_token"
-          },
-          req,
-          res
-        );
-      else sendError(res, new Error("Invalid Credentials"));
-    });
+    if (!req.headers.refresh_token)
+      return sendError(res, new Error("Invalid Credentials"));
+    this._getToken.call(
+      this,
+      {
+        refresh_token: req.headers.refresh_token,
+        grant_type: "refresh_token"
+      },
+      req,
+      res
+    );
   }
 
   _getToken(opts, req, res) {
@@ -119,12 +113,9 @@ class ProxyServer {
           debug(e);
         }
         if (data && data.access_token) {
-          let id = generateUniqueID(req);
-          store[id] = data;
-          res.setHeader("Set-Cookie", "_id=" + id + ";HttpOnly;Path=/");
-
           responseMessage = {
-            message: "successful"
+            message: "successful",
+            ...data
           };
           res.writeHead(200, {
             "Content-Type": "application/json"
@@ -184,33 +175,19 @@ class ProxyServer {
     }
     if (/\/auth\/refresh$/g.test(req.url)) return this.refreshToken(req, res);
 
-    cookieParser(req, res, () => {
-      const callback = () => {
-        return this.proxy.web(req, res, err => {
-          if (err) {
-            debug("proxy error:" + err + ` ${req.url}`);
-            res.writeHead(500, {
-              "Content-Type": "application/json"
-            });
-            res.end(
-              JSON.stringify({
-                message: "An error occurred while proxying request"
-              })
-            );
-          }
+    debug("proxying request");
+    return this.proxy.web(req, res, err => {
+      if (err) {
+        debug("proxy error:" + err + ` ${req.url}`);
+        res.writeHead(500, {
+          "Content-Type": "application/json"
         });
-      };
-      debug("proxying request");
-      if (req.cookies && store[req.cookies._id]) {
-        req.headers.Authorization = `Bearer ${
-          store[req.cookies._id].access_token
-        }`;
-        debug(`set authorization header for req ${req.url}`);
-        callback();
-        return;
+        res.end(
+          JSON.stringify({
+            message: "An error occurred while proxying request"
+          })
+        );
       }
-
-      return callback();
     });
   }
   setupDispatcher() {

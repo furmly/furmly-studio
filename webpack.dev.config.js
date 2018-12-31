@@ -3,6 +3,7 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { spawn } = require("child_process");
 const CopyPlugin = require("copy-webpack-plugin");
+const config = require("./config");
 
 // Any directories you will be adding code/files into, need to be added to this array so webpack will pick them up
 const defaultInclude = path.resolve(__dirname, "src");
@@ -80,6 +81,7 @@ module.exports = {
       title: "Furmly Studio"
     }),
     new webpack.DefinePlugin({
+      "process.env.FURMLY_STUDIO_PORT": JSON.stringify(config.get("app.port")),
       "process.env.NODE_ENV": JSON.stringify("development"),
       "process.env.NODE_CONFIG_DIR": JSON.stringify(
         __dirname + "/src/jadeconfig"
@@ -89,7 +91,9 @@ module.exports = {
   ],
   resolve: {
     alias: {
-      assets: path.resolve(__dirname, "src/assets/")
+      assets: path.resolve(__dirname, "src/assets/"),
+      components: path.resolve(__dirname, "src/components/"),
+      "furmly-controls": path.resolve(__dirname, "src/furmly")
     }
   },
   devtool: "cheap-source-map",

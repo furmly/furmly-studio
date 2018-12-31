@@ -17,7 +17,7 @@ function cors(req, res) {
     debug("cors request!");
     res.setHeader("Access-Control-Request-Method", "*");
     res.setHeader("Access-Control-Allow-Methods", "OPTIONS, GET, POST");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
     res.writeHead(200);
     res.end();
     return true;

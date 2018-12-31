@@ -4,22 +4,50 @@ const HTTP_VERBS = {
   PUT: "PUT",
   GET: "GET"
 };
-const parseJson = data => data.json();
+const parseJson = function(response) {
+  if (response.status !== 200) {
+    return response.json().then(x => {
+      throw new Error(x.message);
+    });
+  }
+  return response.json();
+};
+const secure = function(obj = {}) {
+  if (!this.credentials) throw new Error("No Credentials to send");
+  obj.headers = {
+    ...obj.headers,
+    Authorization: `Bearer ${this.credentials.access_token}`
+  };
+  return obj;
+};
+const _fetch = function(url, ...args) {
+  args.unshift(`${this.baseUrl}${url}`);
+  return fetch.apply(null, args).then(parseJson.bind(this));
+};
 class Client {
-  constructor() {
-    this.baseUrl = `https://localhost:${process.env.FURMLY_STUDIO_PORT ||
-      3330}`;
+  constructor(baseUrl, credentials) {
+    if (!baseUrl) throw new Error("Base URL cannot be null");
+    this.baseUrl = baseUrl;
+    this.credentials = credentials;
   }
-  fetch(...args) {
-    return fetch.apply(null, args).then(parseJson);
-  }
+
   doLogin(credentials) {
-    return fetch(`${this.baseUrl}/auth/login`, {
+    return _fetch.call(this, "/auth/login", {
       headers: { "Content-Type": "application/json" },
       method: HTTP_VERBS.POST,
       body: JSON.stringify(credentials)
-    }).then(parseJson);
+    });
+  }
+  getMenu(name) {
+    return _fetch.call(
+      this,
+      `/api/admin/acl?category=${name || "MAINMENU"}`,
+      secure.call(this)
+    );
+  }
+  setCredentials(credentials) {
+    this.credentials = credentials;
   }
 }
 
-export default new Client();
+export default Client;

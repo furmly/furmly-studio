@@ -7,7 +7,6 @@ import img from "assets/images/logo.svg";
 import "./style.scss";
 import ManageServers, { SERVER } from "./manage-servers";
 import preferences from "../../preferences";
-import client from "../../client";
 import Dispatcher from "../../../dispatcher";
 import ipcConstants from "../../ipcConstants";
 import { CREDENTIALS } from "../../constants";
@@ -49,24 +48,32 @@ class Login extends React.Component {
     });
   };
   doLogin = () => {
-    this.dispatcher.send(
-      ipcConstants.START_PROXY,
-      {
-        connection: this.state.server
-      },
-      async (sender, { started, er }) => {
-        try {
-          if (er) return this.setState({ error: er });
-          const { username, password } = this.state;
-          if (started) {
-            const result = await client.doLogin({ username, password });
-            preferences.set(CREDENTIALS, result);
-            this.props.history.push("/home");
+    this.setState(
+      { error: "", busy: true },
+      this.dispatcher.send(
+        ipcConstants.START_PROXY,
+        {
+          connection: this.state.server
+        },
+        async (sender, { started, er }) => {
+          try {
+            if (er) return this.setState({ error: er, busy: false });
+            const { username, password } = this.state;
+            if (started) {
+              const result = await this.props.client.doLogin({
+                username,
+                password
+              });
+              preferences.set(CREDENTIALS, result);
+              this.props.client.setCredentials(result);
+              this.props.history.push("/home");
+              this.props.history.length = 0;
+            }
+          } catch (e) {
+            this.setState({ error: e.message, busy: false });
           }
-        } catch (e) {
-          this.setState({ error: e.message });
         }
-      }
+      )
     );
   };
   render() {
@@ -76,6 +83,12 @@ class Login extends React.Component {
           <div className={"decal"} />
           <div className={"control"}>
             <img height={120} src={img} />
+            {(this.state.error && (
+              <FormContainer>
+                <p className="error">{this.state.error}</p>
+              </FormContainer>
+            )) ||
+              null}
             <Input
               value={this.state.username}
               label="Username"
@@ -122,6 +135,7 @@ class Login extends React.Component {
 }
 
 Login.propTypes = {
-  history: PropTypes.object
+  history: PropTypes.object.isRequired,
+  client: PropTypes.object.isRequired
 };
 export default Login;
