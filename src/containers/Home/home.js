@@ -7,15 +7,17 @@ import FurmlyControls from "furmly-controls";
 
 const Process = FurmlyControls.PROCESS;
 class Home extends React.Component {
-  constructor(props) {
-    super(props);
+  async UNSAFE_componentWillMount() {
+    await this.props.frame.setSubtitle("Home");
+    await this.props.frame.setSideBarComponent(props => (
+      <SideMenu {...props} openMenu={this.props.openProcess} />
+    ));
   }
   render() {
     let fetchParams = qs.parse(location.search),
       currentStep = (fetchParams && fetchParams.currentStep) || 0;
     return (
       <div className="homePage">
-        <SideMenu />
         <Switch>
           <Route
             path={`${this.props.match.url}/dynamo/:processId`}

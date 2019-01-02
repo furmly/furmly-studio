@@ -17,7 +17,7 @@ if (
   process.defaultApp ||
   /[\\/]electron-prebuilt[\\/]/.test(process.execPath) ||
   /[\\/]electron[\\/]/.test(process.execPath)
-) {
+) { 
   dev = true;
 }
 
@@ -31,7 +31,10 @@ if (process.platform === "win32") {
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    show: false
+    show: false,
+    frame: false,
+    width: 1200,
+    height: 800
   });
 
   // and load the index.html of the app.
@@ -57,7 +60,7 @@ function createWindow() {
   // Don't show until we are ready and loaded
   mainWindow.once("ready-to-show", () => {
     mainWindow.show();
-    mainWindow.maximize();
+    // mainWindow.maximize();
 
     // Open the DevTools automatically if developing
     if (dev) {
