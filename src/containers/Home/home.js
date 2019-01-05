@@ -13,6 +13,14 @@ class Home extends React.Component {
       <SideMenu {...props} openMenu={this.props.openProcess} />
     ));
   }
+  shouldComponentUpdate(nextProps, nextState) {
+    if (
+      nextProps.location.pathname !== this.props.location.pathname ||
+      this.props.location.search !== nextProps.location.search
+    )
+      return true;
+    return false;
+  }
   render() {
     let fetchParams = qs.parse(location.search),
       currentStep = (fetchParams && fetchParams.currentStep) || 0;
@@ -20,7 +28,7 @@ class Home extends React.Component {
       <div className="homePage">
         <Switch>
           <Route
-            path={`${this.props.match.url}/dynamo/:processId`}
+            path={`${this.props.match.url}/furmly/:processId`}
             component={({ match }) => (
               <Process
                 id={match.params.processId}
@@ -37,6 +45,9 @@ class Home extends React.Component {
 }
 
 Home.propTypes = {
-  match: PropTypes.object
+  match: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired,
+  frame: PropTypes.object.isRequired,
+  openProcess: PropTypes.func.isRequired
 };
 export default Home;

@@ -25,7 +25,7 @@ const defaultTheme = {
   errorForeground: "white"
 };
 
-class App extends React.Component {
+class App extends React.PureComponent {
   state = {
     max: false
   };

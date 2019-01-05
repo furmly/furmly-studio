@@ -101,6 +101,7 @@ body {
   margin-left: 6px;
 }
 .sidebar {
+  z-index: 100;
   position: absolute;
   top: 0;
   background-color: $background-color-secondary;

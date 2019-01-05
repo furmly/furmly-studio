@@ -22,7 +22,6 @@ class SideMenu extends React.Component {
     this.setState({ menu });
   }
   open = x => {
-    window.alert(JSON.stringify(x));
     this.props.openMenu(x);
   };
   render() {

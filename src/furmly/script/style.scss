@@ -1,0 +1,23 @@
+@import "assets/styles/variables.scss";
+.edit-button {
+  display: block;
+}
+.script-modal > div,
+.script-modal > div > div:first-child {
+  width: 100%;
+  height: 100%;
+}
+.script-modal {
+  width: 100%;
+  @include header;
+  bottom: 0;
+  top: unset;
+}
+.script-modal > div {
+  max-width: 100%;
+  max-height: 100%;
+}
+.editor {
+  width: 100% !important;
+  height: 100% !important;
+}

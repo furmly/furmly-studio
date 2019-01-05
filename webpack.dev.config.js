@@ -96,7 +96,7 @@ module.exports = {
       "furmly-controls": path.resolve(__dirname, "src/furmly")
     }
   },
-  devtool: "cheap-module-eval-source-map",
+  devtool: "source-map",
   devServer: {
     contentBase: [path.resolve(__dirname, "dist"), furmly],
     stats: {
