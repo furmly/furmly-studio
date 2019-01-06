@@ -20,4 +20,4 @@
 
 ### License
 
-MIT © [Onuekwusi Chidi](https://alexdevero.com).
+MIT © [Onuekwusi Chidi](https://chidionuekwusi.com).

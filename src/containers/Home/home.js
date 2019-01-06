@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { Switch, Route } from "react-router-dom";
 import SideMenu from "components/SideMenu";
 import FurmlyControls from "furmly-controls";
+import "./style.scss";
 
 const Process = FurmlyControls.PROCESS;
 class Home extends React.Component {

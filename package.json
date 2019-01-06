@@ -58,7 +58,8 @@
     "react": "^16.6.3",
     "react-ace": "^6.3.2",
     "react-dom": "^16.6.3",
-    "react-router-dom": "^4.3.1"
+    "react-router-dom": "^4.3.1",
+    "storm-react-diagrams": "^5.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",

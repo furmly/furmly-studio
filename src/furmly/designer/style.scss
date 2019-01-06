@@ -1,5 +1,29 @@
-.container {
-  flex: 1;
-  height: 100%;
-  width: 100%;
+@import "assets/styles/variables.scss";
+.homePage {
+  & > div,
+  & > div > div {
+    height: 100%;
+  }
+  .container {
+    flex: 1;
+    height: 100%;
+    width: 100%;
+  }
+
+  .designer {
+    width: 100%;
+    height: 78%;
+    &::after {
+      content: "";
+      display: block;
+      width: 100%;
+      height: 1px;
+      background-color: $background-color;
+    }
+  }
+
+  .graph {
+    width: 100%;
+    height: 100%;
+  }
 }

@@ -49,7 +49,7 @@ class Script extends React.Component {
         >
           <AceEditor
             className={"editor"}
-            value={this.state.value}
+            value={this.state.value||""}
             onChange={this.setValue}
             mode={this.props.args.mode || "javascript"}
             theme={"monokai"}

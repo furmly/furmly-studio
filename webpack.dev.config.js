@@ -30,7 +30,10 @@ module.exports = {
           { loader: "postcss-loader" },
           { loader: "sass-loader" }
         ],
-        include: defaultInclude
+        include: [
+          defaultInclude,
+          path.resolve(__dirname, "./node_modules/storm-react-diagrams")
+        ]
       },
       {
         test: /\.jsx?$/,
