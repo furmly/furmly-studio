@@ -8,5 +8,6 @@ import Home from "./home";
 
 export default FurmlyControls.createPage(
   withRouter(withClient(withFrame(Home))),
+  null,
   [routerMiddleware(createHashHistory())]
 );
