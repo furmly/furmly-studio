@@ -6,7 +6,7 @@ import "brace/mode/javascript";
 import "brace/mode/json";
 import "brace/theme/monokai";
 import "brace/ext/language_tools";
-import 'brace/ext/searchbox';
+import "brace/ext/searchbox";
 import { FormContainer, Modal, Button, Label } from "furmly-base-web";
 import "./style.scss";
 
@@ -49,9 +49,9 @@ class Script extends React.Component {
         >
           <AceEditor
             className={"editor"}
-            value={this.state.value||""}
+            value={this.state.value || ""}
             onChange={this.setValue}
-            mode={this.props.args.mode || "javascript"}
+            mode={(this.props.args && this.props.args.mode) || "javascript"}
             theme={"monokai"}
             name={this.props.name}
             editorProps={{ $blockScrolling: false }}
