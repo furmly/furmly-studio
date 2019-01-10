@@ -10,7 +10,11 @@ const controls = setup({
     // add all custom controls
     map.SCRIPT = Script;
     // add recipe for designer
-    map.addRecipe("DESIGNER", [new Deffered("container")], createDesigner);
+    map.addRecipe(
+      "DESIGNER",
+      [new Deffered("container"), map.withTemplateCache],
+      createDesigner
+    );
     return map.cook();
   }
 });

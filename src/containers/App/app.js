@@ -13,6 +13,7 @@ import "./style.scss";
 
 injectFontsAndCSSBase();
 const defaultTheme = {
+  dropDownMenuColor: "rgb(40, 39, 64)",
   labelBackgroundColor: "rgb(28, 27, 47)",
   inputBackgroundColor: "rgba(171, 171, 171, 0.3)",
   formComponentBackgroundColor: "transparent",

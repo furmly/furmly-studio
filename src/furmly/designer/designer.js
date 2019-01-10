@@ -15,7 +15,19 @@ const convertToKeyValuePair = function(obj) {
     return { key: x, value: obj[x] };
   });
 };
-const createDesigner = Container => {
+const _p = rel => (typeof rel == "object" ? rel.path : rel);
+const getPath = function(rel, propName) {
+  if (!rel) return;
+  const keys = Object.keys(rel);
+  let found;
+  for (let i = 0; i < keys.length; i++) {
+    let path = _p(rel[keys[i]]);
+    if ((path == propName && !found) || (found && rel[keys[i]].default))
+      found = { path, name: keys[i] };
+  }
+  return found;
+};
+const createDesigner = (Container, withTemplateCache) => {
   class Designer extends React.PureComponent {
     constructor(props) {
       super(props);
@@ -37,10 +49,58 @@ const createDesigner = Container => {
     }
 
     UNSAFE_componentWillMount() {
-      //rehydrate everything.
-      this.createRelationships();
+      this.createRelationships(() => {
+        const nodes = this.engine.getDiagramModel().getNodes();
+        const main = nodes[Object.keys(nodes)[0]];
+        //rehydrate everything based on value.
+        if (
+          this.rehydrate(
+            this.props.args.main.name,
+            this.props.value,
+            main,
+            main
+          )
+        ) {
+          this.refreshGraph();
+        }
+      });
     }
 
+    rehydrate = (entityName, value, currentNode, existingNode, rel) => {
+      if (value) {
+        const item = this.getItem(entityName);
+        const { has = null, hasMany = null } = item.relationships || {};
+
+        const node =
+          existingNode || this.addNode(rel, { x: 100, y: 100 }, currentNode);
+
+        // get properties for the node
+        // also setup its dependencies.
+        const properties = Object.keys(value).reduce((sum, x) => {
+          const { path = null, name = null } =
+            getPath(has, x) || getPath(hasMany, x) || {};
+          if (path) {
+            // this is a dependency.
+            if (Array.prototype.isPrototypeOf(value[x])) {
+              value[x].forEach(v => {
+                this.rehydrate(name, v, node, null, { key: name, value: path });
+              });
+            } else {
+              this.rehydrate(name, value[x], node, null, {
+                key: name,
+                value: path
+              });
+            }
+            return sum;
+          }
+          sum[x] = value[x];
+          return sum;
+        }, {});
+        node.extras = properties;
+        return true;
+      }
+      return false;
+    };
     getDefaultSettings = () => {
       return prefs
         .set(DESIGNER_CONFIG, {
@@ -58,7 +118,7 @@ const createDesigner = Container => {
         .getObj(DESIGNER_CONFIG);
     };
 
-    createRelationships = () => {
+    createRelationships = fn => {
       const rels = {
         [this.props.args.main.name]: this.props.args.main,
         ...this.props.args.elements
@@ -76,15 +136,15 @@ const createDesigner = Container => {
         }
         return sum;
       }, {});
-      this.setState({ relationships });
+      this.setState({ relationships }, fn);
     };
     canAdd = (item, node) => {
-      let rels = this.getRelationships(this.state.currentNode.name);
+      let rels = this.getRelationships(node.name);
       if (rels) {
         const itemSource =
-          this.props.args.main.name == this.state.currentNode.name
+          this.props.args.main.name == node.name
             ? this.props.args.main
-            : this.props.args.elements[this.state.currentNode.name];
+            : this.props.args.elements[node.name];
         const {
           relationships: { has = null, hasMany = null }
         } = itemSource;
@@ -140,18 +200,24 @@ const createDesigner = Container => {
       });
       this.diagramModel = model;
       this.engine.setDiagramModel(this.diagramModel);
-      this.setState({
-        currentNode: this.diagramModel.getNodes()[this.state.currentNode.id]
-      });
+      if (this.state.currentNode)
+        this.setState({
+          currentNode: this.diagramModel.getNodes()[this.state.currentNode.id]
+        });
     };
-    addNode = (item, { x, y } = { x: 100, y: 100 }) => {
-      const currentNode = this.state.currentNode;
+    addNode = (
+      item,
+      { x = 100 * Math.random() * 5, y = 100 * Math.random() * 5 } = {},
+      currentNode = this.state.currentNode,
+      defaultValue = {}
+    ) => {
       if (!currentNode) throw new Error("There's no node selected to add to.");
       if (!this.canAdd(item, currentNode)) return;
       const node = this.getNodeForItem(item);
       node.setPosition(x, y);
+      node.extras = defaultValue;
 
-      const inPort = node.addInPort(this.state.currentNode.name);
+      const inPort = node.addInPort(<b>&#x2022;</b>);
 
       const outPort =
         currentNode.getPort(this.getItemValue(item)) ||
@@ -159,7 +225,7 @@ const createDesigner = Container => {
           new SRD.DefaultPortModel(
             false,
             this.getItemValue(item),
-            this.getItemValue(item)
+            <b>{this.getItemValue(item)}&nbsp;&nbsp;&#x2666;</b>
           )
         );
       inPort.maximumLinks = 1;
@@ -168,14 +234,21 @@ const createDesigner = Container => {
 
       this.engine.getDiagramModel().addNode(node);
       this.engine.getDiagramModel().addLink(link);
+      return node;
+    };
 
+    addNodeAndRefresh = (...args) => {
+      this.addNode.apply(this, args);
       this.refreshGraph();
     };
     getElements = () => {
       const elements =
         this.state.currentNode &&
         this.getItem(this.state.currentNode.name).elements;
-     // console.log(elements);
+      if (Array.prototype.isPrototypeOf(elements)) return elements;
+
+      if (elements && !this.props.templateCache.get(elements.furmly_ref))
+        this.props.templateCache.add(elements.furmly_ref, elements.template);
       return (
         (elements && elements.length && elements) ||
         (elements && elements.template)
@@ -183,7 +256,7 @@ const createDesigner = Container => {
     };
     drop = event => {
       event.preventDefault();
-      this.addNode(
+      this.addNodeAndRefresh(
         JSON.parse(event.dataTransfer.getData("furmly-diagram-node")),
         this.engine.getRelativeMousePoint(event)
       );
@@ -219,20 +292,18 @@ const createDesigner = Container => {
             <SRD.DiagramWidget
               className={"graph"}
               allowLooseLinks={false}
-              smartRouting
+              deleteKeys={[]}
               maxNumberPointsPerLink={0}
               diagramEngine={this.engine}
             />
           </div>
           <Panel right type={"large"}>
             <Container
-              name={"__"}
               valueChanged={form => {
-                //console.log(form);
-                this.state.currentNode.extras = form;
+                this.state.currentNode.extras = form["undefined"];
                 this.forceUpdate();
               }}
-              value={currentNode && currentNode.extras && currentNode.extras.__}
+              value={currentNode && currentNode.extras}
               elements={this.getElements()}
               validator={{}}
             />
@@ -242,9 +313,11 @@ const createDesigner = Container => {
     }
   }
   Designer.propTypes = {
-    args: PropTypes.object.isRequired
+    args: PropTypes.object.isRequired,
+    value: PropTypes.object,
+    templateCache: PropTypes.object.isRequired
   };
-  return { getComponent: () => Designer };
+  return { getComponent: () => withTemplateCache(Designer) };
 };
 
 export default createDesigner;

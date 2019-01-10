@@ -23,7 +23,7 @@ class Home extends React.Component {
     return false;
   }
   render() {
-    let fetchParams = qs.parse(location.search),
+    let fetchParams = qs.parse(this.props.location.search),
       currentStep = (fetchParams && fetchParams.currentStep) || 0;
     return (
       <div className="homePage">
