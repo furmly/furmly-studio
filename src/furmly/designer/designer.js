@@ -31,28 +31,36 @@ const createDesigner = (Container, withTemplateCache) => {
   class Designer extends React.PureComponent {
     constructor(props) {
       super(props);
-      this.state = {
-        currentNode: null
-      };
       this.diagramModel = new SRD.DiagramModel();
       this.engine = new SRD.DiagramEngine();
       this.config = prefs.getObj(DESIGNER_CONFIG) || this.getDefaultSettings();
       this.engine.installDefaultFactories();
-      const main = this.getNodeForItem(this.props.args.main);
-      main.setPosition(100, 100);
-      main.addListener({
+      const mainNode = this.getNodeForItem(this.props.args.main);
+      mainNode.setPosition(100, 100);
+      mainNode.addListener({
         selectionChanged: this.selectedNode,
         entityRemoved: this.sticky
       });
-      this.diagramModel.addNode(main);
+      this.diagramModel.addNode(mainNode);
       this.engine.setDiagramModel(this.diagramModel);
+      this.state = {
+        currentNode: null,
+        changed: false,
+        mainNode
+      };
     }
-
+    /**
+     * Create relationships.
+     * Popuate the templateCache.
+     */
     UNSAFE_componentWillMount() {
       this.createRelationships(() => {
+        //populate global template cache with designer template cache.
+        this.populateTemplateCache();
         const nodes = this.engine.getDiagramModel().getNodes();
         const main = nodes[Object.keys(nodes)[0]];
         //rehydrate everything based on value.
+        console.log(JSON.stringify(this.props.value, null, " "));
         if (
           this.rehydrate(
             this.props.args.main.name,
@@ -65,7 +73,9 @@ const createDesigner = (Container, withTemplateCache) => {
         }
       });
     }
-
+    /**
+     * This creates all the nodes to match the value of the data as at mount.
+     */
     rehydrate = (entityName, value, currentNode, existingNode, rel) => {
       if (value) {
         const item = this.getItem(entityName);
@@ -101,18 +111,21 @@ const createDesigner = (Container, withTemplateCache) => {
       }
       return false;
     };
+    /**
+     * Default Settings the designer uses for things which include color configuration etc.
+     */
     getDefaultSettings = () => {
       return prefs
         .set(DESIGNER_CONFIG, {
           itemColorMap: {
-            "existing-step": "green",
-            "existing-processor": "red",
+            "existing-step": "gray",
+            "existing-processor": "#ab0101",
             step: "gray",
-            processor: "red",
-            asyncValidator: "red",
+            processor: "#ab0101",
+            asyncValidator: "#ab0101",
             form: "#adad00",
             validator: "slate",
-            element: "blue"
+            element: "#023069"
           }
         })
         .getObj(DESIGNER_CONFIG);
@@ -138,6 +151,12 @@ const createDesigner = (Container, withTemplateCache) => {
       }, {});
       this.setState({ relationships }, fn);
     };
+
+    populateTemplateCache = () => {
+      Object.keys(this.props.args.templateCache).forEach(x => {
+        this.props.templateCache.add(x, this.props.args.templateCache[x]);
+      });
+    };
     canAdd = (item, node) => {
       let rels = this.getRelationships(node.name);
       if (rels) {
@@ -154,13 +173,45 @@ const createDesigner = (Container, withTemplateCache) => {
         );
       }
     };
+    processValue = () => {
+      if (this.state.changed) {
+        const value = this.updateTree(this.state.mainNode);
+        this.props.valueChanged({ [this.props.name]: value });
+      }
+    };
+    updateTree = node => {
+      if (!node) return undefined;
+      const value = { ...node.extras };
+      node.getOutPorts().reduce((sum, x) => {
+        const { has, hasMany } = this.getRelationships(node.name);
+        // each port represents a list of a certain kind.
+        const links = x.getLinks(); // each relationship
+        if (getPath(hasMany, x.getName())) {
+          const list = Object.keys(links).map(v => {
+            return this.updateTree(links[v].getTargetPort().getParent()); // add this to the list
+          });
+          sum[x.getName()] = list;
+        }
+        if (getPath(has, x.getName())) {
+          sum[x.getName()] = this.updateTree(
+            links[Object.keys(links)[0]].getTargetPort().getParent()
+          );
+        }
+
+        return sum;
+      }, value);
+      return value;
+    };
     selectedNode = event => {
       if (event.isSelected) {
         this.setState({ currentNode: event.entity });
         return;
+      } else {
+        // asynchronously update tree.
+        this.processValue();
       }
       if (!this.diagramModel.getSelectedItems().length) {
-        this.setState({ currentNode: null });
+        this.setState({ currentNode: null, changed: false });
       }
     };
     sticky = event => {
@@ -191,7 +242,7 @@ const createDesigner = (Container, withTemplateCache) => {
         this.diagramModel.serializeDiagram(),
         this.engine
       );
-      const nodes = model.getNodes();
+      let nodes = model.getNodes();
       Object.keys(nodes).forEach(x => {
         nodes[x].addListener({
           selectionChanged: this.selectedNode,
@@ -200,14 +251,15 @@ const createDesigner = (Container, withTemplateCache) => {
       });
       this.diagramModel = model;
       this.engine.setDiagramModel(this.diagramModel);
-      if (this.state.currentNode)
-        this.setState({
-          currentNode: this.diagramModel.getNodes()[this.state.currentNode.id]
-        });
+      nodes = this.diagramModel.getNodes();
+      this.setState({
+        currentNode: this.state.currentNode && nodes[this.state.currentNode.id],
+        mainNode: nodes[this.state.mainNode.id]
+      });
     };
     addNode = (
       item,
-      { x = 100 * Math.random() * 5, y = 100 * Math.random() * 5 } = {},
+      { x = 100 * Math.random() * 15, y = 100 * Math.random() * 15 } = {},
       currentNode = this.state.currentNode,
       defaultValue = {}
     ) => {
@@ -247,11 +299,18 @@ const createDesigner = (Container, withTemplateCache) => {
         this.getItem(this.state.currentNode.name).elements;
       if (Array.prototype.isPrototypeOf(elements)) return elements;
 
-      if (elements && !this.props.templateCache.get(elements.furmly_ref))
+      if (
+        elements &&
+        elements.furmly_ref &&
+        !this.props.templateCache.get(elements.furmly_ref)
+      )
         this.props.templateCache.add(elements.furmly_ref, elements.template);
       return (
-        (elements && elements.length && elements) ||
-        (elements && elements.template)
+        (Array.prototype.isPrototypeOf(elements) && elements) ||
+        (elements && elements.template) ||
+        (elements &&
+          elements.template_ref &&
+          this.props.templateCache.get(elements.template_ref))
       );
     };
     drop = event => {
@@ -300,7 +359,12 @@ const createDesigner = (Container, withTemplateCache) => {
           <Panel right type={"large"}>
             <Container
               valueChanged={form => {
-                this.state.currentNode.extras = form["undefined"];
+                const { currentNode } = this.state;
+                currentNode.extras = form;
+                this.setState({
+                  changed: true,
+                  currentNode
+                });
                 this.forceUpdate();
               }}
               value={currentNode && currentNode.extras}
@@ -315,7 +379,9 @@ const createDesigner = (Container, withTemplateCache) => {
   Designer.propTypes = {
     args: PropTypes.object.isRequired,
     value: PropTypes.object,
-    templateCache: PropTypes.object.isRequired
+    name: PropTypes.string.isRequired,
+    templateCache: PropTypes.object.isRequired,
+    valueChanged: PropTypes.func.isRequired
   };
   return { getComponent: () => withTemplateCache(Designer) };
 };

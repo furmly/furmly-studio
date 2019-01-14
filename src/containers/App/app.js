@@ -16,11 +16,12 @@ const defaultTheme = {
   labelBackgroundColor: "rgb(28, 27, 47)",
   inputBackgroundColor: "rgba(171, 171, 171, 0.3)",
   formComponentBackgroundColor: "transparent",
-  labelColor: "rgb(85, 83, 136)",
+  labelColor: "rgb(148, 146, 206)",
   inputColor: "white",
   accentColor: "orange",
   factor: 1.2,
   modalBackgroundColor: "rgb(40, 39, 64)",
+  dropDownMenuColor: "#44436d",
   errorColor: "#ab0101",
   errorForeground: "white"
 };
