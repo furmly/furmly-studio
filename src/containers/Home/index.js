@@ -6,8 +6,9 @@ import { withFrame } from "components/withFrame";
 import { routerMiddleware } from "react-router-redux";
 import Home from "./home";
 
+
 export default FurmlyControls.createPage(
-  withRouter(withClient(withFrame(Home))),
+  withRouter(withClient(withFrame(Home))), 
   null,
   [routerMiddleware(createHashHistory())]
 );

@@ -18,6 +18,8 @@ const furmlyClient2 = path.resolve(
   "./node_modules/furmly-base-web/node_modules/furmly-client/dist"
 );
 const furmlyFonts = furmly + "\\**.ttf";
+const worker = furmly + "/worker.js";
+const dist = path.resolve(__dirname, "dist");
 
 module.exports = {
   module: {
@@ -90,7 +92,10 @@ module.exports = {
         __dirname + "/src/jadeconfig"
       )
     }),
-    new CopyPlugin([{ from: furmlyFonts, to: path.resolve(__dirname, "dist") }])
+    new CopyPlugin([
+      { from: furmlyFonts, to: dist },
+      { from: worker, to: dist }
+    ])
   ],
   resolve: {
     alias: {

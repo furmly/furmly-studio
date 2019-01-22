@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { FormContainer } from "furmly-base-web";
+import { WorkerProvider } from "furmly-base-web";
 import * as SRD from "storm-react-diagrams";
 import "./style.scss";
 import Draggable from "./draggable";
@@ -204,6 +204,7 @@ const createDesigner = (Container, withTemplateCache) => {
     };
     selectedNode = event => {
       if (event.isSelected) {
+        console.log("selected node changed");
         this.setState({ currentNode: event.entity });
         return;
       } else {
@@ -211,6 +212,7 @@ const createDesigner = (Container, withTemplateCache) => {
         this.processValue();
       }
       if (!this.diagramModel.getSelectedItems().length) {
+        console.log("no selected node");
         this.setState({ currentNode: null, changed: false });
       }
     };
@@ -357,20 +359,23 @@ const createDesigner = (Container, withTemplateCache) => {
             />
           </div>
           <Panel right type={"large"}>
-            <Container
-              valueChanged={form => {
-                const { currentNode } = this.state;
-                currentNode.extras = form;
-                this.setState({
-                  changed: true,
-                  currentNode
-                });
-                this.forceUpdate();
-              }}
-              value={currentNode && currentNode.extras}
-              elements={this.getElements()}
-              validator={{}}
-            />
+            <WorkerProvider>
+              <Container
+                valueChanged={form => {
+                  console.log("value changed!" + JSON.stringify(form));
+                  const { currentNode } = this.state;
+                  currentNode.extras = form;
+                  this.setState({
+                    changed: true,
+                    currentNode
+                  });
+                  this.forceUpdate();
+                }}
+                value={currentNode && currentNode.extras}
+                elements={this.getElements()}
+                validator={{}}
+              />
+            </WorkerProvider>
           </Panel>
         </div>
       );

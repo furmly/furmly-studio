@@ -9,8 +9,7 @@ import "./style.scss";
 const Process = FurmlyControls.PROCESS;
 class Home extends React.Component {
   async UNSAFE_componentWillMount() {
-    await this.props.frame.setSubtitle("Home");
-    await this.props.frame.setSideBarComponent(props => (
+    await this.props.frame.setTitleAndSideBarComponent("Home", props => (
       <SideMenu {...props} openMenu={this.props.openProcess} />
     ));
   }
@@ -38,7 +37,7 @@ class Home extends React.Component {
               />
             )}
           />
-          <Route path={""} component={() => <div>Loading...</div>} />
+          <Route path={""} component={() => <div className={"loader"} />} />
         </Switch>
       </div>
     );

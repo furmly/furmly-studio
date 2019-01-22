@@ -1,3 +1,4 @@
+import React from "react";
 export const ipcSend = function(args) {
   this.source.send(args.type, args);
 };
@@ -7,4 +8,13 @@ export const iconMap = {
   people: "users",
   web: "globe-africa",
   supervisor_account: "user-shield"
+};
+
+export const createProvider = function(Provider, WrappedComponent) {
+  const Component = props => (
+    <Provider>
+      <WrappedComponent {...props} />
+    </Provider>
+  );
+  return Component;
 };
