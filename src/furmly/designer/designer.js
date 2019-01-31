@@ -60,7 +60,7 @@ const createDesigner = (Container, withTemplateCache) => {
         const nodes = this.engine.getDiagramModel().getNodes();
         const main = nodes[Object.keys(nodes)[0]];
         //rehydrate everything based on value.
-        console.log(JSON.stringify(this.props.value, null, " "));
+
         if (
           this.rehydrate(
             this.props.args.main.name,
@@ -173,8 +173,8 @@ const createDesigner = (Container, withTemplateCache) => {
         );
       }
     };
-    processValue = () => {
-      if (this.state.changed) {
+    processValue = force => {
+      if (force || this.state.changed) {
         const value = this.updateTree(this.state.mainNode);
         this.props.valueChanged({ [this.props.name]: value });
       }
@@ -204,15 +204,14 @@ const createDesigner = (Container, withTemplateCache) => {
     };
     selectedNode = event => {
       if (event.isSelected) {
-        console.log("selected node changed");
         this.setState({ currentNode: event.entity });
         return;
-      } else {
-        // asynchronously update tree.
-        this.processValue();
       }
+      // else {
+      //   // asynchronously update tree.
+      //   this.processValue();
+      // }
       if (!this.diagramModel.getSelectedItems().length) {
-        console.log("no selected node");
         this.setState({ currentNode: null, changed: false });
       }
     };
@@ -233,9 +232,7 @@ const createDesigner = (Container, withTemplateCache) => {
         ? this.props.args.main
         : this.props.args.elements[name];
     };
-    remove = event => {
-      console.log(event);
-    };
+    remove = event => {};
     //horrible hack to get react storm diagram thing to refresh properly;
     //hope the author fixes sometime ever.
     refreshGraph = () => {
@@ -362,14 +359,13 @@ const createDesigner = (Container, withTemplateCache) => {
             <WorkerProvider>
               <Container
                 valueChanged={form => {
-                  console.log("value changed!" + JSON.stringify(form));
                   const { currentNode } = this.state;
                   currentNode.extras = form;
                   this.setState({
                     changed: true,
                     currentNode
                   });
-                  this.forceUpdate();
+                  this.processValue(true);
                 }}
                 value={currentNode && currentNode.extras}
                 elements={this.getElements()}

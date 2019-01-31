@@ -24,11 +24,11 @@ module.exports = {
     client: {
       clientId: env(
         "FURMLY_STUDIO_CLIENT_ID",
-        "n2wZASNunUShF2xQ0o4P44xImeSX6hlm"
+        "nWIN5ZtLdjvDi2dAkT23juKIKaSYE242"
       ),
       clientSecret: env(
         "FURMLY_STUDIO_CLIENT_SECRET",
-        "kLqqED9oQnlnRxSjJTQZmRwH4ZKekNNW"
+        "5EIHmKH1WRlM6eY5cdNX1bWFeOnKhLLw"
       )
     }
   }
