@@ -108,7 +108,7 @@ class Login extends React.Component {
               }
               items={this.state.servers}
               value={this.state.server}
-              keyProperty="uri"
+              keyProperty={["uri"]}
               valueChanged={this.serverChanged}
               displayProperty="uri"
             />

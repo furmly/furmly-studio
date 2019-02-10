@@ -24,7 +24,8 @@ const defaultTheme = {
   modalBackgroundColor: "rgb(40, 39, 64)",
   dropDownMenuColor: "#44436d",
   errorColor: "#ab0101",
-  errorForeground: "white"
+  errorForeground: "white",
+  dividerColor: "rgb(28, 27, 47)"
 };
 
 class App extends React.PureComponent {

@@ -20,10 +20,7 @@ class Panel extends React.Component {
   render() {
     return (
       <div className={`panel ${this.state.isOpen} ${this.props.type}`}>
-        <IconButton
-          onClick={this.toggle}
-          icon={this.getIcon()}
-        />
+        <IconButton onClick={this.toggle} icon={this.getIcon()} />
         <div className={"content"}>{this.props.children}</div>
       </div>
     );

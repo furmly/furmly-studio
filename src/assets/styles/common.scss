@@ -22,3 +22,7 @@
 p {
   margin: 0;
 }
+html {
+  -webkit-font-smoothing: subpixel-antialiased;
+  text-rendering: optimizeLegibility;
+}

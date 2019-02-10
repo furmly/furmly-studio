@@ -4,9 +4,11 @@ import { IconButton } from "furmly-base-web";
 import { iconMap } from "../../util";
 import "./style.scss";
 
+let times = 0;
 class SideMenu extends React.Component {
   state = {
-    menu: []
+    menu: [],
+    current: null
   };
   async UNSAFE_componentWillMount() {
     let menu = await this.props.client.getMenu();
@@ -21,10 +23,13 @@ class SideMenu extends React.Component {
     }, []);
     this.setState({ menu });
   }
-  open = x => {
+  open = async x => {
+    await this.props.frame.setSubtitle(x.displayLabel);
+    this.setState({ current: x });
     this.props.openMenu(x);
   };
   render() {
+    console.log(`rendered sidemenu ${times++} times !`);
     return (
       <div className={"sideMenuContainer"}>
         {(this.state.menu || []).map((x, index) => {
@@ -37,7 +42,9 @@ class SideMenu extends React.Component {
                     label={i.displayLabel}
                     iconSize={16}
                     icon={iconMap[i.icon] || "folder"}
-                    className={"nav-button"}
+                    className={`nav-button ${
+                      i == this.state.current ? "current" : ""
+                    }`}
                     key={i._id}
                     onClick={() => this.open(i)}
                   />
@@ -53,6 +60,7 @@ class SideMenu extends React.Component {
 
 SideMenu.propTypes = {
   client: PropTypes.object,
+  frame: PropTypes.object,
   openMenu: PropTypes.func.isRequired
 };
 
