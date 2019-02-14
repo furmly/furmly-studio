@@ -63,9 +63,9 @@ function createWindow() {
     // mainWindow.maximize();
 
     // Open the DevTools automatically if developing
-    if (dev) {
+    // if (dev) {
       mainWindow.webContents.openDevTools();
-    }
+    // }
   });
 
   // Emitted when the window is closed.

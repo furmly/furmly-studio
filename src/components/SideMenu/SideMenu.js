@@ -4,8 +4,7 @@ import { IconButton } from "furmly-base-web";
 import { iconMap } from "../../util";
 import "./style.scss";
 
-let times = 0;
-class SideMenu extends React.Component {
+class SideMenu extends React.PureComponent {
   state = {
     menu: [],
     current: null
@@ -29,7 +28,6 @@ class SideMenu extends React.Component {
     this.props.openMenu(x);
   };
   render() {
-    console.log(`rendered sidemenu ${times++} times !`);
     return (
       <div className={"sideMenuContainer"}>
         {(this.state.menu || []).map((x, index) => {

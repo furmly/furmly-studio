@@ -14,7 +14,17 @@ class App {
 
   init() {
     ipcMain.on(ipcContants.START_PROXY, (event, { connection, sslConfig }) => {
-      if (this.proxyServer && this.currentConnection == connection)
+      if (!connection) {
+        return event.sender.send(ipcContants.START_PROXY, {
+          started: false,
+          er: "Server cannot be empty"
+        });
+      }
+      if (
+        this.proxyServer &&
+        this.currentConnection == connection &&
+        connection
+      )
         return event.sender.send(ipcContants.START_PROXY, { started: true });
 
       try {

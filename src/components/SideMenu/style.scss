@@ -1,7 +1,8 @@
 .sideMenuContainer {
+  overflow-y: auto;
   .collapsible {
     .text {
-      padding: 0px 12px;
+      padding: 12px 12px;
     }
     .content {
       .nav-button {
@@ -13,13 +14,13 @@
             width: 6px;
             height: 6px;
             border-radius: 50%;
-            background-color: red;
+            background-color: white;
             position: absolute;
             right: 25px;
             top: 50%;
             transform: translateY(-50%);
           }
-          background-color: rgba(86, 0, 255, 0.07);
+          background-color: rgba(0, 0, 0, 0.292);
         }
         svg {
           width: 14px;
@@ -35,7 +36,7 @@
         flex-direction: row;
         align-items: center;
         &:hover {
-          background-color: rgba(0, 0, 0, 0.292);
+          background-color: rgba(0, 0, 0, 0.068);
         }
       }
     }

@@ -17,7 +17,7 @@ const furmlyClient2 = path.resolve(
   __dirname,
   "./node_modules/furmly-base-web/node_modules/furmly-client/dist"
 );
-const furmlyFonts = furmly + "\\**.ttf";
+const furmlyFonts = furmly + "\\*.ttf";
 const worker = furmly + "/worker.js";
 const dist = path.resolve(__dirname, "dist");
 
@@ -106,7 +106,7 @@ module.exports = {
   },
   devtool: "source-map",
   devServer: {
-    contentBase: [path.resolve(__dirname, "dist"), furmly],
+    contentBase: [path.resolve(__dirname, "dist")],
     stats: {
       colors: true,
       chunks: false,

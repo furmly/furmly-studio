@@ -2,6 +2,7 @@ import React from "react";
 import { remote } from "electron";
 import PropTypes from "prop-types";
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
+import { FrameProvider } from "components/withFrame";
 import {
   injectFontsAndCSSBase,
   ThemeProvider,
@@ -10,19 +11,21 @@ import {
 import Login from "../Login";
 import Home from "../Home";
 import "./style.scss";
-import { FrameContext } from "components/withFrame";
 
 injectFontsAndCSSBase();
 const defaultTheme = {
   labelBackgroundColor: "rgb(28, 27, 47)",
-  inputBackgroundColor: "rgba(171, 171, 171, 0.3)",
+  secondaryBackgroundColor: "rgb(76, 74, 121)",
+  secondaryColor: "white",
+  copyColor: "whitesmoke",
+  inputBackgroundColor: "rgb(28,27,47)",
   formComponentBackgroundColor: "transparent",
   labelColor: "rgb(148, 146, 206)",
   inputColor: "white",
   accentColor: "orange",
   factor: 1.2,
   modalBackgroundColor: "rgb(40, 39, 64)",
-  dropDownMenuColor: "#44436d",
+  dropDownMenuColor: "rgb(28,27,47)",
   errorColor: "#ab0101",
   errorForeground: "white",
   dividerColor: "rgb(28, 27, 47)"
@@ -66,7 +69,7 @@ class App extends React.PureComponent {
   render() {
     const Side = this.state.side;
     return (
-      <FrameContext.Provider value={this.frame}>
+      <FrameProvider value={this.frame}>
         <React.Fragment>
           <header id="titlebar">
             <div id="drag-region">
@@ -130,7 +133,7 @@ class App extends React.PureComponent {
             </ThemeProvider>
           </div>
         </React.Fragment>
-      </FrameContext.Provider>
+      </FrameProvider>
     );
   }
 }

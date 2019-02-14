@@ -1,21 +1,21 @@
 {
   "name": "furmly-studio",
   "version": "1.2.2",
-  "description": "Minimal Electron, React, PostCSS and Webpack boilerplate to help you get started with building your next app.",
+  "description": "Desktop app for creating furmlys",
   "license": "MIT",
   "private": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/alexdevero/electron-react-webpack-boilerplate.git"
+    "url": "https://github.com/chidionuekwusi/furmly-studio.git"
   },
   "homepage": "",
   "bugs": {
-    "url": "https://github.com/alexdevero/electron-react-webpack-boilerplate.git/issues"
+    "url": "https://github.com/chidionuekwusi/furmly-studio.git/issues"
   },
   "author": {
-    "name": "Alex Devero",
-    "email": "deveroalex@gmail.com",
-    "url": "https://github.com/alexdevero"
+    "name": "Chidi Onuekwusi",
+    "email": "chidionuekwusi@gmail.com",
+    "url": "https://github.com/chidionuekwusi"
   },
   "keywords": [
     "app",
@@ -35,8 +35,28 @@
     "yarn": ">=1.0.0"
   },
   "main": "main.js",
+  "build": {
+    "appId": "furmly.studio",
+    "copyright": "Copyright © year ${author}",
+    "nsis": {
+      "createStartMenuShortcut": true,
+      "createDesktopShortcut": true,
+      "runAfterFinish": true
+    },
+    "win": {
+      "target": "nsis-web"
+    },
+    "productName": "Furmly Studio",
+    "files": [
+      "main.js",
+      "dist"
+    ],
+    "mac": {
+      "category": "productivity"
+    }
+  },
   "scripts": {
-    "prod": "webpack --mode production --config webpack.build.config.js && electron --noDevServer .",
+    "prod": "webpack --mode production --config webpack.build.config.js && electron --noDevServer . ",
     "start": "webpack-dev-server --hot --host 0.0.0.0 --config=./webpack.dev.config.js --mode development",
     "build": "webpack --config webpack.build.config.js --mode production",
     "package": "npm run build",
@@ -68,7 +88,6 @@
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.4",
     "babel-plugin-module-resolver": "^3.1.1",
-    "babili-webpack-plugin": "^0.1.2",
     "copy-webpack-plugin": "^4.6.0",
     "css-loader": "^1.0.0",
     "electron-packager": "^12.2.0",

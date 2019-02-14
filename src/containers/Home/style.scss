@@ -1,6 +1,7 @@
 @import "assets/styles/variables.scss";
 .homePage {
   height: 100%;
+  overflow:auto; 
   background-color: $background-color-secondary;
   .loader {
     width: 100%;

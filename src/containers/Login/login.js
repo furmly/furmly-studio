@@ -3,7 +3,7 @@ import { Select, Input, Button, FormContainer, Modal } from "furmly-base-web";
 import { ipcRenderer } from "electron";
 import PropTypes from "prop-types";
 import "assets/styles/common.scss";
-import img from "assets/images/logo.svg";
+import img from "assets/images/invert1.png";
 import "./style.scss";
 import ManageServers, { SERVER } from "./manage-servers";
 import preferences from "../../preferences";
@@ -48,8 +48,7 @@ class Login extends React.Component {
     });
   };
   doLogin = () => {
-    this.setState(
-      { error: "", busy: true },
+    this.setState({ error: "", busy: true }, () =>
       this.dispatcher.send(
         ipcConstants.START_PROXY,
         {
@@ -60,6 +59,7 @@ class Login extends React.Component {
             if (er) return this.setState({ error: er, busy: false });
             const { username, password } = this.state;
             if (started) {
+              debugger;
               const result = await this.props.client.doLogin({
                 username,
                 password
