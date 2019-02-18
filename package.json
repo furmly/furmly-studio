@@ -90,6 +90,7 @@
     "react-ace": "^6.3.2",
     "react-dom": "^16.6.3",
     "react-router-dom": "^4.3.1",
+    "react-spring": "^8.0.7",
     "storm-react-diagrams": "^5.2.1"
   },
   "devDependencies": {
