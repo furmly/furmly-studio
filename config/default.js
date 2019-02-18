@@ -1,9 +1,13 @@
 const env = require("./fromEnv");
 const path = require("path");
+console.log(path.dirname(require.main.filename));
 module.exports = {
   app: {
     port: env("FURMLY_STUDIO_PORT", 3330),
-    sslFolder: env("FURMLY_SSL_FOLDER", path.join(__dirname, "../ssl")),
+    sslFolder: env(
+      "FURMLY_SSL_FOLDER",
+      path.dirname(require.main.filename) + "\\ssl"
+    ),
     certificatePath: env("FURMLY_STUDIO_CERTIFICATE_PATH", "superc-crt.pem"),
     certificateKeyPath: env(
       "FURMLY_STUDIO_CERTIFICATE_KEY_PATH",

@@ -7,8 +7,8 @@ import img from "assets/images/invert1.png";
 import "./style.scss";
 import ManageServers, { SERVER } from "./manage-servers";
 import preferences from "../../preferences";
-import Dispatcher from "../../../dispatcher";
-import ipcConstants from "../../ipcConstants";
+import Dispatcher from "../../../app/dispatcher";
+import ipcConstants from "../../../app/ipc-constants";
 import { CREDENTIALS } from "../../constants";
 import { ipcSend } from "../../util";
 
@@ -59,7 +59,6 @@ class Login extends React.Component {
             if (er) return this.setState({ error: er, busy: false });
             const { username, password } = this.state;
             if (started) {
-              debugger;
               const result = await this.props.client.doLogin({
                 username,
                 password
@@ -85,7 +84,11 @@ class Login extends React.Component {
             <img height={120} src={img} />
             {(this.state.error && (
               <FormContainer>
-                <p className="error">{this.state.error}</p>
+                <p className="error">
+                  {typeof this.state.error == "object"
+                    ? JSON.stringify(this.state.error)
+                    : this.state.error}
+                </p>
               </FormContainer>
             )) ||
               null}

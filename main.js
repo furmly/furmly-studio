@@ -1,5 +1,8 @@
 "use strict";
-
+if (process.argv[2] == "--start-proxy") {
+  require("./proxy");
+  return;
+}
 // Import parts of electron to use
 const { app, BrowserWindow } = require("electron");
 const path = require("path");
@@ -17,7 +20,7 @@ if (
   process.defaultApp ||
   /[\\/]electron-prebuilt[\\/]/.test(process.execPath) ||
   /[\\/]electron[\\/]/.test(process.execPath)
-) { 
+) {
   dev = true;
 }
 
@@ -63,9 +66,9 @@ function createWindow() {
     // mainWindow.maximize();
 
     // Open the DevTools automatically if developing
-    // if (dev) {
+    if (dev) {
       mainWindow.webContents.openDevTools();
-    // }
+    }
   });
 
   // Emitted when the window is closed.

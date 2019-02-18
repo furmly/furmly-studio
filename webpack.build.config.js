@@ -17,7 +17,7 @@ const furmlyClient2 = path.resolve(
   __dirname,
   "./node_modules/furmly-bnpmase-web/node_modules/furmly-client/dist"
 );
-const furmlyFonts = furmly + "\\*.ttf";
+const furmlyFonts = furmly + "\\**.ttf";
 const worker = furmly + "/worker.js";
 const dist = path.resolve(__dirname, "dist");
 
@@ -101,8 +101,8 @@ module.exports = {
       "process.env.FURMLY_STUDIO_PORT": JSON.stringify(config.get("app.port"))
     }),
     new CopyPlugin([
-      { from: furmlyFonts, to: dist },
-      { from: worker, to: dist }
+      { from: furmlyFonts, to: dist, flatten: true },
+      { from: worker, to: dist, flatten: true }
     ])
   ],
   stats: {

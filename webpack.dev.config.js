@@ -93,8 +93,8 @@ module.exports = {
       )
     }),
     new CopyPlugin([
-      { from: furmlyFonts, to: dist },
-      { from: worker, to: dist }
+      { from: furmlyFonts, to: dist, flatten: true },
+      { from: worker, to: dist, flatten: true }
     ])
   ],
   resolve: {

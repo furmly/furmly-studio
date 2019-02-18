@@ -1,0 +1,24 @@
+directories:
+  output: release
+  buildResources: dist
+appId: furmly.studio
+copyright: Copyright © year 2019
+nsis:
+  createStartMenuShortcut: true
+  createDesktopShortcut: true
+  runAfterFinish: true
+win:
+  target: nsis-web
+productName: Furmly Studio
+files:
+  - filter:
+      - main.js
+      - dist
+      - app
+      - config
+      - proxy
+      - ssl
+      - furmly-client.config.js
+mac:
+  category: productivity
+electronVersion: 2.0.14

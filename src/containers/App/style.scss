@@ -120,7 +120,7 @@ body {
   transform: translate3d(0, 0, 0);
   transition: transform 0.5s ease-in-out;
   will-change: transform;
-  // box-shadow: 7px 0px 15px -2px rgba(0, 0, 0, 0.13);
+  box-shadow: 7px 0px 15px -2px rgba(0, 0, 0, 0.13);
 }
 .toggle-button {
   -webkit-app-region: no-drag;

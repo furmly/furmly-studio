@@ -1,10 +1,10 @@
 const { ipcMain } = require("electron");
 const url = require("url");
 const { spawn } = require("child_process");
-const debug = require("debug");
-const Dispatcher = require("../dispatcher");
-const proxyContants = require("../proxy-server/constants");
-const ipcContants = require("../src/ipcConstants");
+const debug = require("debug")("furmly");
+const Dispatcher = require("./dispatcher");
+const proxyContants = require("../proxy/constants");
+const ipcContants = require("./ipc-constants");
 
 class App {
   constructor() {
@@ -30,16 +30,18 @@ class App {
       try {
         //if the proxy server has not been initialized create a new one.
         if (!this.proxyServer) {
+          debug("about to start furmly proxy server");
           this.proxyServer = spawn(
-            "node",
+            process.execPath,
             [
-              "./proxy-server/index.js",
+              ".",
+              "--start-proxy",
               JSON.stringify({ connection: url.parse(connection), sslConfig })
             ],
             {
               stdio: ["ipc"],
               env: {
-                DEBUG: "*"
+                DEBUG: process.env.DEBUG
               }
             }
           );
@@ -50,6 +52,8 @@ class App {
             event.sender.send(ipcContants.START_PROXY, { started: !er, er });
           });
           this.proxyServer.on("exit", code => {
+            debug("proxy server died");
+            debug("exit code:" + code);
             this.proxyServer = null;
             this.currentConnection = null;
             event.sender.send(ipcContants.START_PROXY, { started: false });
