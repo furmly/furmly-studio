@@ -3,33 +3,11 @@ import { remote } from "electron";
 import PropTypes from "prop-types";
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import { FrameProvider } from "components/withFrame";
-import {
-  injectFontsAndCSSBase,
-  ThemeProvider,
-  IconButton
-} from "furmly-base-web";
+import { ThemeProvider, IconButton } from "furmly-base-web";
+import defaultTheme from "../../theme";
 import Login from "../Login";
 import Home from "../Home";
 import "./style.scss";
-
-injectFontsAndCSSBase();
-const defaultTheme = {
-  labelBackgroundColor: "rgb(28, 27, 47)",
-  secondaryBackgroundColor: "rgb(76, 74, 121)",
-  secondaryColor: "white",
-  copyColor: "whitesmoke",
-  inputBackgroundColor: "rgb(28,27,47)",
-  formComponentBackgroundColor: "transparent",
-  labelColor: "rgb(148, 146, 206)",
-  inputColor: "white",
-  accentColor: "orange",
-  factor: 1.2,
-  modalBackgroundColor: "rgb(40, 39, 64)",
-  dropDownMenuColor: "rgb(28,27,47)",
-  errorColor: "#ab0101",
-  errorForeground: "white",
-  dividerColor: "rgb(28, 27, 47)"
-};
 
 class App extends React.PureComponent {
   state = {

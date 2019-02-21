@@ -22,7 +22,6 @@ class Home extends React.Component {
     return false;
   }
   render() {
-    console.log("home");
     let fetchParams = qs.parse(this.props.location.search),
       currentStep = (fetchParams && fetchParams.currentStep) || 0;
     return (

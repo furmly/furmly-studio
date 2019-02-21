@@ -54,7 +54,8 @@
     }
     input,
     .select button,
-    .selectset > div > div > button {
+    .selectset > div > div > button,
+    .list > div > div + div {
       background-color: rgba(0, 0, 0, 0.279);
     }
     .select > div > div + div:after,
