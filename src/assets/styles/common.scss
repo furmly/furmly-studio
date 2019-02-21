@@ -27,8 +27,11 @@ html {
   text-rendering: optimizeLegibility;
 }
 
-label {
-  background-color: transparent !important;
-  font-size: 14px !important;
-  padding-left: 0px !important;
+.furmly-control label,
+.confirmation-dialog label,
+.loginPage label,
+.manage-servers label {
+  background-color: transparent;
+  font-size: 14px;
+  padding: 12px 12px 12px 0px;
 }

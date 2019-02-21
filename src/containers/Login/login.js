@@ -125,6 +125,7 @@ class Login extends React.Component {
             </FormContainer>
           </div>
           <Modal
+            className={"manage-servers"}
             visibility={this.state.serverDialogOpen}
             done={this.doneWithServerDialog}
             title={"Manage Servers"}

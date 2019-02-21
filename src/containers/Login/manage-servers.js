@@ -61,15 +61,14 @@ class ManageServers extends React.Component {
           }
           valueChanged={this.setUri}
         />
-        <Input
-          value={this.state.uri}
-          label={"Uri"}
-          valueChanged={this.setUri}
-        />
+
         <FormContainer>
           <Button disabled={!this.state.uri} onClick={this.saveUri}>
             Add
           </Button>
+        </FormContainer>
+        <div className="divider" />
+        <FormContainer>
           <List
             items={this.state.uris}
             rowTemplate={rowTemplate}

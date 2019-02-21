@@ -1,6 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { WorkerProvider } from "furmly-base-web";
+import {
+  WorkerProvider,
+  IconButton,
+  FormContainer,
+  ConfirmationDialog
+} from "furmly-base-web";
 import * as SRD from "storm-react-diagrams";
 import "./style.scss";
 import Draggable from "./draggable";
@@ -38,8 +43,7 @@ const createDesigner = (Container, withTemplateCache) => {
       const mainNode = this.getNodeForItem(this.props.args.main);
       mainNode.setPosition(100, 100);
       mainNode.addListener({
-        selectionChanged: this.selectedNode,
-        entityRemoved: this.sticky
+        selectionChanged: this.selectedNode
       });
       this.diagramModel.addNode(mainNode);
       this.engine.setDiagramModel(this.diagramModel);
@@ -215,9 +219,7 @@ const createDesigner = (Container, withTemplateCache) => {
         this.setState({ currentNode: null, changed: false });
       }
     };
-    sticky = event => {
-      //put it back;
-    };
+
     getItemValue = item => {
       if (typeof item.value == "object") return item.value.path;
 
@@ -232,7 +234,7 @@ const createDesigner = (Container, withTemplateCache) => {
         ? this.props.args.main
         : this.props.args.elements[name];
     };
-    remove = event => {};
+
     //horrible hack to get react storm diagram thing to refresh properly;
     //hope the author fixes sometime ever.
     refreshGraph = () => {
@@ -282,7 +284,6 @@ const createDesigner = (Container, withTemplateCache) => {
       inPort.maximumLinks = 1;
       outPort.maximumLinks = (outPort.maximumLinks || 0) + 1;
       const link = outPort.link(inPort);
-
       this.engine.getDiagramModel().addNode(node);
       this.engine.getDiagramModel().addLink(link);
       return node;
@@ -329,10 +330,50 @@ const createDesigner = (Container, withTemplateCache) => {
     _renderRelationship = item => {
       return <Draggable key={item.key} item={item} className={"item"} />;
     };
+    askForConfirmation = () => {
+      this.setState({ confirmationVisible: true });
+    };
+    closeConfirmation = () => {
+      this.setState({ confirmationVisible: false });
+    };
+    destroyNode = (node = this.state.currentNode) => {
+      this.removeNode(node);
+      this.setState(
+        { changed: true, currentNode: null, confirmationVisible: false },
+        this.processValue.bind(this, true)
+      );
+    };
+    removeNode = (node = this.state.currentNode) => {
+      node.extras = undefined;
+      Object.keys(node.ports).forEach(x => {
+        const port = node.ports[x];
+        if (!port.in) {
+          //go to the other side of the link.
+          Object.keys(port.links).forEach(z => {
+            //port
+            const link = port.links[z];
+            this.removeNode(link.targetPort.parent);
+          });
+        }
+      });
+      node.remove();
+    };
     render() {
-      const { currentNode, relationships } = this.state;
+      const {
+        currentNode,
+        relationships,
+        mainNode,
+        confirmationVisible
+      } = this.state;
       return (
         <div className={"container"}>
+          <ConfirmationDialog
+            content={`Are you sure you want to delete ${currentNode &&
+              currentNode.name}?`}
+            visibility={confirmationVisible}
+            onConfirm={this.destroyNode}
+            onCancel={this.closeConfirmation}
+          />
           <Panel>
             {(relationships &&
               currentNode &&
@@ -371,6 +412,15 @@ const createDesigner = (Container, withTemplateCache) => {
                 elements={this.getElements()}
                 validator={{}}
               />
+              {currentNode && currentNode !== mainNode && (
+                <FormContainer>
+                  <IconButton
+                    icon="trash"
+                    label="Delete"
+                    onClick={() => this.askForConfirmation()}
+                  />
+                </FormContainer>
+              )}
             </WorkerProvider>
           </Panel>
         </div>

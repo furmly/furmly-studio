@@ -1,12 +1,12 @@
 import React from "react";
 import FurmlyControls from "furmly-controls";
-import { createToast } from "furmly-base-web";
+import { createToast, Icon } from "furmly-base-web";
 import { withRouter } from "react-router-dom";
 import { withClient } from "components/withClient";
 import { withFrame } from "components/withFrame";
 import { routerMiddleware } from "react-router-redux";
 import Home from "./home";
-import theme from "../../theme";
+import theme, { inputColor } from "../../theme";
 import { history } from "../../util";
 
 let Toast;
@@ -15,7 +15,13 @@ setTimeout(
   0
 );
 const showMessage = store => next => action => {
-  if (action.type == "SHOW_MESSAGE") Toast.show(<h3>{action.message}</h3>);
+  if (action.type == "SHOW_MESSAGE")
+    Toast.show(
+      <span>
+        <Icon icon={"info-circle"} color={inputColor} />
+        {action.message}
+      </span>
+    );
   next(action);
 };
 export default FurmlyControls.createPage(

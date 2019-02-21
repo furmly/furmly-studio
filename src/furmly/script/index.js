@@ -1,6 +1,6 @@
 import React from "react";
-import brace from "brace";
 import PropTypes from "prop-types";
+import "brace";
 import AceEditor from "react-ace";
 import "brace/mode/javascript";
 import "brace/mode/json";

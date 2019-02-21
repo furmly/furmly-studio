@@ -4,6 +4,7 @@ injectFontsAndCSSBase(
   "background:rgba(0, 192, 255, 0.25)",
   "background:rgba(0, 192, 255, 0.46);"
 );
+export const inputColor = "white";
 export default {
   labelBackgroundColor: "rgb(28, 27, 47)",
   secondaryBackgroundColor: "rgb(76, 74, 121)",
@@ -12,7 +13,7 @@ export default {
   inputBackgroundColor: "rgb(28,27,47)",
   formComponentBackgroundColor: "transparent",
   labelColor: "rgb(148, 146, 206)",
-  inputColor: "white",
+  inputColor,
   accentColor: "orange",
   factor: 1.2,
   modalBackgroundColor: "rgb(40, 39, 64)",
