@@ -83,7 +83,10 @@ module.exports = {
   target: "electron-renderer",
   plugins: [
     new HtmlWebpackPlugin({
-      title: "Furmly Studio"
+      title: "Furmly Studio",
+      appMountId: "root",
+      template: "./src/assets/index.html",
+      inject: false
     }),
     new webpack.DefinePlugin({
       "process.env.FURMLY_STUDIO_PORT": JSON.stringify(config.get("app.port")),

@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { Switch, Route } from "react-router-dom";
 import SideMenu from "components/SideMenu";
 import FurmlyControls from "furmly-controls";
+import Toast from "../../components/toast";
 import "./style.scss";
 
 const Process = FurmlyControls.PROCESS;
@@ -21,6 +22,19 @@ class Home extends React.Component {
       return true;
     return false;
   }
+  completed = () => {
+    Toast.show(
+      <div>
+        <p>
+          <b>Restart Process ?</b>
+        </p>
+      </div>,
+      Toast.DURATION.SHORT,
+      () => {
+        Toast.show("Heading home...");
+      }
+    );
+  };
   render() {
     let fetchParams = qs.parse(this.props.location.search),
       currentStep = (fetchParams && fetchParams.currentStep) || 0;
@@ -34,6 +48,7 @@ class Home extends React.Component {
                 id={match.params.processId}
                 currentStep={currentStep}
                 fetchParams={fetchParams}
+                processCompleted={this.completed}
               />
             )}
           />

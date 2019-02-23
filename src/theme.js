@@ -7,7 +7,7 @@ injectFontsAndCSSBase(
 export const inputColor = "white";
 export default {
   labelBackgroundColor: "rgb(28, 27, 47)",
-  secondaryBackgroundColor: "rgb(76, 74, 121)",
+  secondaryBackgroundColor: "#201f35",
   secondaryColor: "white",
   copyColor: "whitesmoke",
   inputBackgroundColor: "rgb(28,27,47)",
