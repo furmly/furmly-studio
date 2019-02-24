@@ -20,6 +20,18 @@ class SideMenu extends React.PureComponent {
       sum[categories[x.group]].items.push(x);
       return sum;
     }, []);
+    menu.unshift({
+      name: "Home",
+      items: [
+        {
+          value: "",
+          type: "CLIENT",
+          _id: "home",
+          displayLabel: "Dashboard"
+        }
+      ],
+      key: "home"
+    });
     this.setState({ menu });
   }
   open = async x => {

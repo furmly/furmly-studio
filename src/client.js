@@ -45,8 +45,18 @@ class Client {
       secure.call(this)
     );
   }
+  getDashboardStats() {
+    return _fetch.call(
+      this,
+      "/api/processors/run/DASHBOARD_STATS",
+      secure.call(this)
+    );
+  }
   setCredentials(credentials) {
     this.credentials = credentials;
+  }
+  getUsername() {
+    return this.credentials.username;
   }
 }
 

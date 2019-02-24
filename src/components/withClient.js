@@ -1,5 +1,6 @@
 import React from "react";
 import hoistNonReactStatics from "hoist-non-react-statics";
+import PropTypes from "prop-types";
 import preferences from "../preferences";
 import Client from "../client";
 import { CREDENTIALS } from "../constants";
@@ -24,13 +25,21 @@ export const withClientProvider = WrappedComponent => {
     render() {
       return (
         <ClientContext.Provider value={this.state.client}>
-          <WrappedComponent {...this.props} />
+          {this.props.children}
         </ClientContext.Provider>
       );
     }
   }
-  hoistNonReactStatics(WrappedComponent, Provider);
-  return Provider;
+  Provider.propTypes = {
+    children: PropTypes.node
+  };
+  const ClientProvider = props => (
+    <Provider>
+      <WrappedComponent {...props} />
+    </Provider>
+  );
+  hoistNonReactStatics(WrappedComponent, ClientProvider);
+  return ClientProvider;
 };
 
 export const withClient = WrappedComponent => {

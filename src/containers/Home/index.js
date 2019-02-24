@@ -11,13 +11,15 @@ import { history } from "../../util";
 import Toast from "../../components/toast";
 
 const showMessage = store => next => action => {
-  if (action.type == "SHOW_MESSAGE")
+  if (action.type == "SHOW_MESSAGE") {
     Toast.show(
       <span>
         <Icon icon={"info-circle"} color={inputColor} />
         {action.message}
       </span>
     );
+  }
+
   next(action);
 };
 export default FurmlyControls.createPage(

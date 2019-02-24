@@ -6,6 +6,8 @@ import SideMenu from "components/SideMenu";
 import FurmlyControls from "furmly-controls";
 import Toast from "../../components/toast";
 import "./style.scss";
+import { Icon } from "furmly-base-web";
+import Dashboard from "../Dashboard";
 
 const Process = FurmlyControls.PROCESS;
 class Home extends React.Component {
@@ -22,16 +24,42 @@ class Home extends React.Component {
       return true;
     return false;
   }
-  completed = () => {
-    Toast.show(
+  completed = (nextProps, oldProps) => {
+    let cancelled;
+    const cancel = Toast.show(
       <div>
-        <p>
+        <p
+          className={"interactive"}
+          onClick={() => {
+            cancelled = true;
+            cancel();
+            this.props.openProcess({
+              value: oldProps.id,
+              type: "FURMLY",
+              params: qs.stringify({
+                ...oldProps.fetchParams,
+                restart: new Date().getTime()
+              })
+            });
+          }}
+        >
           <b>Restart Process ?</b>
         </p>
       </div>,
       Toast.DURATION.SHORT,
       () => {
-        Toast.show("Heading home...");
+        if (!cancelled) {
+          Toast.show(
+            <React.Fragment>
+              <span>
+                <Icon icon={"home"} iconSize={18} color={"white"} />{" "}
+                {"Taking you home ..."}
+              </span>
+            </React.Fragment>,
+            2000,
+            () => this.props.history.push("/home")
+          );
+        }
       }
     );
   };
@@ -52,7 +80,10 @@ class Home extends React.Component {
               />
             )}
           />
-          <Route path={""} component={() => <div className={"loader"} />} />
+          <Route
+            path={`${this.props.match.url}/`}
+            component={Dashboard}
+          />
         </Switch>
       </div>
     );
@@ -62,6 +93,7 @@ class Home extends React.Component {
 Home.propTypes = {
   match: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
   frame: PropTypes.object.isRequired,
   openProcess: PropTypes.func.isRequired
 };
