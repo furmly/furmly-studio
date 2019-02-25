@@ -13,7 +13,11 @@ const Process = FurmlyControls.PROCESS;
 class Home extends React.Component {
   async UNSAFE_componentWillMount() {
     await this.props.frame.setTitleAndSideBarComponent("Home", props => (
-      <SideMenu {...props} openMenu={this.props.openProcess} />
+      <SideMenu
+        {...props}
+        logout={this.logout}
+        openMenu={this.props.openProcess}
+      />
     ));
   }
   shouldComponentUpdate(nextProps, nextState) {
@@ -24,6 +28,14 @@ class Home extends React.Component {
       return true;
     return false;
   }
+  logout = async () => {
+    await this.props.frame.clearSideBarComponent("Login");
+    this.props.client.setCredentials(null);
+    setTimeout(() => {
+      this.props.history.push("/");
+      this.props.history.length = 0;
+    }, 1000);
+  };
   completed = (nextProps, oldProps) => {
     let cancelled;
     const cancel = Toast.show(
@@ -80,10 +92,7 @@ class Home extends React.Component {
               />
             )}
           />
-          <Route
-            path={`${this.props.match.url}/`}
-            component={Dashboard}
-          />
+          <Route path={`${this.props.match.url}/`} component={Dashboard} />
         </Switch>
       </div>
     );
@@ -95,6 +104,7 @@ Home.propTypes = {
   location: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   frame: PropTypes.object.isRequired,
+  client: PropTypes.object.isRequired,
   openProcess: PropTypes.func.isRequired
 };
 export default Home;

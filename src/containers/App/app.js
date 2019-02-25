@@ -42,7 +42,8 @@ class App extends React.PureComponent {
     setTitleAndSideBarComponent: async (subTitle, side) =>
       this.setStateAsync({ subTitle, side }),
     setSubtitle: async subTitle => this.setStateAsync({ subTitle }),
-    clearSideBarComponent: async () => this.setStateAsync({ side: null })
+    clearSideBarComponent: async subTitle =>
+      this.setStateAsync({ side: null, sideVisible: false, subTitle })
   };
   render() {
     const Side = this.state.side;

@@ -3,6 +3,10 @@ $background-color-secondary: rgb(40, 39, 64);
 $accent-color: rgb(255, 187, 0);
 $accent-color-secondary: rgb(255, 204, 64);
 $box-shadow: 0px 0px 135px -20px rgba(0, 0, 0, 0.64);
+$menu-label: rgb(148, 146, 206);
+$menu-selected: rgba(0, 0, 0, 0.292);
+$menu-hover: rgba(0, 0, 0, 0.068);
+$menu-item-color: white;
 @mixin header {
   height: calc(100% - 32px);
 }

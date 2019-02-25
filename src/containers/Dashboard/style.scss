@@ -21,12 +21,23 @@
       margin: 0 0 0.5rem 0.5rem;
     }
     .card {
+      height: 230px;
+      .description {
+        font-size: 14px;
+        transform: translate3d(0, -5px, 0);
+        opacity: 0;
+      }
+      .card-title {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
       border-radius: 4px;
       padding: 25px;
       background: rgba(0, 0, 0, 0.197);
       position: relative;
       & svg {
-        float: right;
         fill: white;
         margin-top: -8px;
       }
@@ -44,6 +55,14 @@
       &:hover {
         svg {
           fill: $accent-color;
+        }
+        .count {
+          display: none;
+        }
+        .description {
+          transform: translate3d(0, 0, 0);
+          opacity: 1;
+          transition: transform 0.5s, opacity 1s;
         }
         transition: transform 0.1s ease-in;
         transform: scale(1.01, 1.01);

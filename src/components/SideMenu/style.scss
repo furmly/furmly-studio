@@ -1,11 +1,33 @@
+@import "assets/styles/variables.scss";
 .sideMenuContainer {
   overflow-y: auto;
+  height: 100%;
+  position: relative;
+  .user-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    // background-color: rgba(0, 0, 0, 0.496);
+    box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, 0.12);
+    padding: 16px;
+    .logout {
+      color: $accent-color;
+    }
+    span {
+      vertical-align: top;
+    }
+    svg {
+      float: left;
+      fill: $accent-color;
+    }
+  }
   .collapsible {
     .text {
       padding: 12px 12px;
       display: block;
       position: relative;
-      color: rgb(148, 146, 206);
+      color: $menu-label;
       &:after {
         content: "";
         width: 100%;
@@ -32,23 +54,24 @@
             top: 50%;
             transform: translateY(-50%);
           }
-          background-color: rgba(0, 0, 0, 0.292);
+          background-color: $menu-selected;
         }
         svg {
           width: 14px;
           height: 14px;
           margin-right: 20px;
+          fill: $menu-item-color;
         }
         padding-left: 16px;
         padding-top: 6px;
         padding-bottom: 6px;
-        color: white;
+        color: $menu-item-color;
         width: 100%;
         display: flex;
         flex-direction: row;
         align-items: center;
         &:hover {
-          background-color: rgba(0, 0, 0, 0.068);
+          background-color: $menu-hover;
         }
       }
     }

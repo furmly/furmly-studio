@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { IconButton } from "furmly-base-web";
+import { IconButton, Icon } from "furmly-base-web";
 import { iconMap } from "../../util";
 import "./style.scss";
 
@@ -27,6 +27,7 @@ class SideMenu extends React.PureComponent {
           value: "",
           type: "CLIENT",
           _id: "home",
+          icon: "tachometer-alt",
           displayLabel: "Dashboard"
         }
       ],
@@ -39,10 +40,11 @@ class SideMenu extends React.PureComponent {
     this.setState({ current: x });
     this.props.openMenu(x);
   };
+
   render() {
     return (
       <div className={"sideMenuContainer"}>
-        {(this.state.menu || []).map((x, index) => {
+        {(this.state.menu || []).map(x => {
           return (
             <div className={"collapsible"} key={x.key}>
               <span className={"text"}>{x.name}</span>
@@ -51,7 +53,7 @@ class SideMenu extends React.PureComponent {
                   <IconButton
                     label={i.displayLabel}
                     iconSize={16}
-                    icon={iconMap[i.icon] || "folder"}
+                    icon={i.icon}
                     className={`nav-button ${
                       i == this.state.current ? "current" : ""
                     }`}
@@ -63,6 +65,14 @@ class SideMenu extends React.PureComponent {
             </div>
           );
         })}
+        <div className={"user-controls"}>
+          <Icon icon="user-circle" size={42} />
+          <span>{this.props.client.getUsername()}</span>
+          <br />
+          <span className="logout interactive" onClick={this.props.logout}>
+            Logout
+          </span>
+        </div>
       </div>
     );
   }
@@ -71,7 +81,8 @@ class SideMenu extends React.PureComponent {
 SideMenu.propTypes = {
   client: PropTypes.object,
   frame: PropTypes.object,
-  openMenu: PropTypes.func.isRequired
+  openMenu: PropTypes.func.isRequired,
+  logout: PropTypes.func.isRequired
 };
 
 export default SideMenu;

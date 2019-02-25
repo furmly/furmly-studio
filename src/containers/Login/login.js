@@ -63,8 +63,9 @@ class Login extends React.Component {
                 username,
                 password
               });
-              preferences.set(CREDENTIALS, { ...result, username });
-              this.props.client.setCredentials(result);
+              const cred = { ...result, username };
+              preferences.set(CREDENTIALS, cred);
+              this.props.client.setCredentials(cred);
               this.props.history.push("/home");
               this.props.history.length = 0;
             }
