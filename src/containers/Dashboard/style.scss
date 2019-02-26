@@ -1,5 +1,11 @@
 @import "assets/styles/variables.scss";
 .dashboardPage {
+  background: linear-gradient(
+    45deg,
+    rgba(255, 0, 0, 0) 68%,
+    rgba(0, 255, 173, 0.08) 90%,
+    rgba(255, 224, 0, 0.15)
+  );
   padding: 25px;
   .header {
     font-family: Lato;

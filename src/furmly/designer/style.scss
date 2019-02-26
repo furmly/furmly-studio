@@ -23,10 +23,19 @@
     flex: 1;
   }
   .panel {
-    overflow-y: auto;
     .content {
+      display: flex;
+      flex-direction: column;
       border-top: rgb(28, 27, 47) solid 1px;
       margin-top: 3px;
+      height: calc(100% - 25px);
+      .editor {
+        flex: 1;
+      }
+      .form {
+        flex: 1;
+        overflow-y: auto;
+      }
     }
   }
   .panel.show {
@@ -67,9 +76,10 @@
       width: 50%;
     }
     .selectset > div:nth-child(2) {
-      background-color: rgba(0, 0, 0, 0.238);
-      border-bottom: $background-color solid 1px;
-      border-top: $background-color solid 1px;
+      background-color: rgba(0, 0, 0, 0.102);
+      // border-bottom: $background-color solid 1px;
+      // border-top: $background-color solid 1px;
+      box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, 0.12);
     }
     label {
       background-color: transparent;

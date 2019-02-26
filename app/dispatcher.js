@@ -6,11 +6,19 @@ class Dispatcher {
     this.waitHandles = {};
     this.source = source;
     this.customSend = _send;
-    eventNames.forEach(name =>
-      this.source.on(name, this.onEvent.bind(this, name))
-    );
+    this._handlers = [];
+    eventNames.forEach(name => {
+      const handler = this.onEvent.bind(this, name);
+      this.source.on(name, handler);
+      this._handlers.push({ name, handler });
+    });
   }
 
+  destructor() {
+    this._handlers.forEach(({ name, handler }) => {
+      this.source.removeListener(name, handler);
+    });
+  }
   waitForEvent(name, fn, keep = false) {
     if (!this.waitHandles[name]) this.waitHandles[name] = [];
     this.waitHandles[name].push({ fn, keep });

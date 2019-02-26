@@ -64,8 +64,9 @@ class Dashboard extends React.Component {
   };
   async componentDidMount() {
     try {
+      this.setState({ busy: true });
       const { totals } = await this.props.client.getDashboardStats();
-      this.setState({ totals, busy: false });
+      setTimeout(() => this.setState({ totals, busy: false }), 300);
     } catch (e) {
       Toast.show(e.message);
       this.setState({ busy: false });
@@ -76,7 +77,8 @@ class Dashboard extends React.Component {
       <div className="dashboardPage">
         <h1 className="header">Welcome {this.props.client.getUsername()}</h1>
         <p className="microcopy">
-          below is a rundown of the magic you've made so far.
+          here is a rundown of the furmly magic you've made so far. Hover on
+          each card for a brief overview of what they mean to furmly.
         </p>
         {(this.state.busy && <BusyIndicator />) || (
           <div className={"card-container"}>

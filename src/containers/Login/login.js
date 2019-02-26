@@ -1,5 +1,12 @@
 import React from "react";
-import { Select, Input, Button, FormContainer, Modal } from "furmly-base-web";
+import {
+  Select,
+  Input,
+  Button,
+  FormContainer,
+  Modal,
+  BusyIndicator
+} from "furmly-base-web";
 import { ipcRenderer } from "electron";
 import PropTypes from "prop-types";
 import "assets/styles/common.scss";
@@ -15,18 +22,26 @@ import { ipcSend } from "../../util";
 class Login extends React.Component {
   constructor(props) {
     super(props);
-    this.dispatcher = new Dispatcher(
-      ipcRenderer,
-      [ipcConstants.START_PROXY],
-      ipcSend
-    );
+
     this.state = {
       serverDialogOpen: false,
+      busy: false,
       username: "",
       password: "",
       server: "",
       servers: preferences.getObj(SERVER) || [{ uri: "http://localhost:5000" }]
     };
+  }
+
+  componentDidMount() {
+    this.dispatcher = new Dispatcher(
+      ipcRenderer,
+      [ipcConstants.START_PROXY],
+      ipcSend
+    );
+  }
+  componentWillUnmount() {
+    this.dispatcher.destructor();
   }
 
   usernameChanged = username => {
@@ -83,47 +98,53 @@ class Login extends React.Component {
           <div className={"decal"} />
           <div className={"control"}>
             <img height={120} src={img} />
-            {(this.state.error && (
-              <FormContainer>
-                <p className="error">
-                  {typeof this.state.error == "object"
-                    ? JSON.stringify(this.state.error)
-                    : this.state.error}
-                </p>
-              </FormContainer>
-            )) ||
-              null}
-            <Input
-              value={this.state.username}
-              label="Username"
-              valueChanged={this.usernameChanged}
-            />
-            <Input
-              value={this.state.password}
-              label="Password"
-              type={"password"}
-              valueChanged={this.passwordChanged}
-            />
+            {(this.state.busy && <BusyIndicator />) || (
+              <React.Fragment>
+                {(this.state.error && (
+                  <FormContainer>
+                    <p className="error">
+                      {typeof this.state.error == "object"
+                        ? JSON.stringify(this.state.error)
+                        : this.state.error}
+                    </p>
+                  </FormContainer>
+                )) ||
+                  null}
+                <Input
+                  value={this.state.username}
+                  label="Username"
+                  valueChanged={this.usernameChanged}
+                />
+                <Input
+                  value={this.state.password}
+                  label="Password"
+                  type={"password"}
+                  valueChanged={this.passwordChanged}
+                />
 
-            <Select
-              label="Select server to connect to"
-              description={
-                "Please ensure your furmly server is up and running...."
-              }
-              items={this.state.servers}
-              value={this.state.server}
-              keyProperty={["uri"]}
-              valueChanged={this.serverChanged}
-              displayProperty="uri"
-            />
-            <FormContainer>
-              <Button intent={"DEFAULT"} onClick={this.openNewServer}>
-                Add new item
-              </Button>
-            </FormContainer>
-            <FormContainer>
-              <Button onClick={this.doLogin}>LOGIN</Button>
-            </FormContainer>
+                <Select
+                  label="Select server to connect to"
+                  description={
+                    "Please ensure your furmly server is up and running...."
+                  }
+                  items={this.state.servers}
+                  value={this.state.server}
+                  keyProperty={["uri"]}
+                  valueChanged={this.serverChanged}
+                  displayProperty="uri"
+                />
+                <FormContainer>
+                  <Button intent={"DEFAULT"} onClick={this.openNewServer}>
+                    Add new item
+                  </Button>
+                </FormContainer>
+                <FormContainer>
+                  <Button disabled={this.state.busy} onClick={this.doLogin}>
+                    LOGIN
+                  </Button>
+                </FormContainer>
+              </React.Fragment>
+            )}
           </div>
           <Modal
             className={"manage-servers"}

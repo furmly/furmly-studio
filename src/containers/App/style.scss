@@ -4,6 +4,18 @@
   height: 100%;
   background-color: $background-color;
 }
+.app-logo-container {
+  width: 100%;
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  .app-logo {
+    height: 16px;
+    width: 16px;
+    margin-right: 8px;
+  }
+}
 
 #root {
   height: 100%;

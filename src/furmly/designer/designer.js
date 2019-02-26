@@ -6,6 +6,12 @@ import {
   FormContainer,
   ConfirmationDialog
 } from "furmly-base-web";
+import "brace";
+import "brace/mode/json";
+import "brace/theme/monokai";
+import "brace/ext/language_tools";
+import "brace/ext/searchbox";
+import AceEditor from "react-ace";
 import * as SRD from "storm-react-diagrams";
 import "./style.scss";
 import Draggable from "./draggable";
@@ -49,6 +55,7 @@ const createDesigner = (Container, withTemplateCache) => {
       this.engine.setDiagramModel(this.diagramModel);
       this.state = {
         currentNode: null,
+        viewSource: false,
         changed: false,
         mainNode
       };
@@ -343,6 +350,18 @@ const createDesigner = (Container, withTemplateCache) => {
         this.processValue.bind(this, true)
       );
     };
+    toggleSource = () => {
+      this.setState({ viewSource: !this.state.viewSource });
+    };
+    formValueChanged = form => {
+      const { currentNode } = this.state;
+      currentNode.extras = form;
+      this.setState({
+        changed: true,
+        currentNode
+      });
+      this.processValue(true);
+    };
     removeNode = (node = this.state.currentNode) => {
       node.extras = undefined;
       Object.keys(node.ports).forEach(x => {
@@ -363,7 +382,8 @@ const createDesigner = (Container, withTemplateCache) => {
         currentNode,
         relationships,
         mainNode,
-        confirmationVisible
+        confirmationVisible,
+        viewSource
       } = this.state;
       return (
         <div className={"container"}>
@@ -398,28 +418,52 @@ const createDesigner = (Container, withTemplateCache) => {
           </div>
           <Panel right type={"large"}>
             <WorkerProvider>
-              <Container
-                valueChanged={form => {
-                  const { currentNode } = this.state;
-                  currentNode.extras = form;
-                  this.setState({
-                    changed: true,
-                    currentNode
-                  });
-                  this.processValue(true);
-                }}
-                value={currentNode && currentNode.extras}
-                elements={this.getElements()}
-                validator={{}}
-              />
-              {currentNode && currentNode !== mainNode && (
-                <FormContainer>
-                  <IconButton
-                    icon="trash"
-                    label="Delete"
-                    onClick={() => this.askForConfirmation()}
+              {viewSource ? (
+                <AceEditor
+                  className={"editor"}
+                  value={
+                    (currentNode &&
+                      JSON.stringify(currentNode.extras, null, " ")) ||
+                    null
+                  }
+                  onChange={e => {
+                    this.formValueChanged(JSON.parse(e));
+                  }}
+                  mode={"json"}
+                  theme={"monokai"}
+                  editorProps={{ $blockScrolling: false }}
+                  enableBasicAutocompletion={true}
+                  enableLiveAutocompletion={true}
+                />
+              ) : (
+                <div className="form">
+                  <Container
+                    valueChanged={this.formValueChanged}
+                    value={currentNode && currentNode.extras}
+                    elements={this.getElements()}
+                    validator={{}}
                   />
-                </FormContainer>
+                </div>
+              )}
+              {currentNode && (
+                <React.Fragment>
+                  <div className="divider" />
+                  <FormContainer>
+                    {(currentNode !== mainNode && (
+                      <IconButton
+                        icon="trash"
+                        label="Delete"
+                        onClick={() => this.askForConfirmation()}
+                      />
+                    )) ||
+                      null}
+                    <IconButton
+                      icon="eye"
+                      label={`${viewSource ? "Close" : "View"} source`}
+                      onClick={() => this.toggleSource()}
+                    />
+                  </FormContainer>
+                </React.Fragment>
               )}
             </WorkerProvider>
           </Panel>

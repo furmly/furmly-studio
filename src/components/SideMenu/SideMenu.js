@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { IconButton, Icon } from "furmly-base-web";
-import { iconMap } from "../../util";
 import "./style.scss";
 
 class SideMenu extends React.PureComponent {
@@ -33,7 +32,7 @@ class SideMenu extends React.PureComponent {
       ],
       key: "home"
     });
-    this.setState({ menu });
+    this.setState({ menu, current: menu[menu.length - 1][0] });
   }
   open = async x => {
     await this.props.frame.setSubtitle(x.displayLabel);

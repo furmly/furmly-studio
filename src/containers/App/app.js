@@ -3,6 +3,7 @@ import { remote } from "electron";
 import PropTypes from "prop-types";
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import { FrameProvider } from "components/withFrame";
+import logo from "assets/images/logo.png";
 import { ThemeProvider, IconButton } from "furmly-base-web";
 import defaultTheme from "../../theme";
 import Login from "../Login";
@@ -43,7 +44,11 @@ class App extends React.PureComponent {
       this.setStateAsync({ subTitle, side }),
     setSubtitle: async subTitle => this.setStateAsync({ subTitle }),
     clearSideBarComponent: async subTitle =>
-      this.setStateAsync({ side: null, sideVisible: false, subTitle })
+      this.setStateAsync({ side: null, sideVisible: false, subTitle }),
+    close: async fn => {
+      await this.setStateAsync({ sideVisible: "" });
+      if (fn) fn();
+    }
   };
   render() {
     const Side = this.state.side;
@@ -65,9 +70,11 @@ class App extends React.PureComponent {
                   </div>
                 )) ||
                   null}
-                <span>{`Furmly${(this.state.subTitle &&
-                  " - " + this.state.subTitle) ||
-                  ""}`}</span>
+                <span className="app-logo-container">
+                  <img className="app-logo" src={logo} /> <b>Furmly</b>
+                  {`${(this.state.subTitle && " - " + this.state.subTitle) ||
+                    ""}`}
+                </span>
               </div>
               <div id="window-controls">
                 <div className="button" id="min-button" onClick={this.minimize}>
