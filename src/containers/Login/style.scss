@@ -1,4 +1,17 @@
 @import "assets/styles/variables.scss";
+.m-info {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  font-family: Lato;
+  background: $info-background;
+  color: $info-color;
+  font-size: 14px;
+  // font-style: italic;
+  svg {
+    fill: $info-color;
+  }
+}
 .loginPage {
   height: 100%;
   width: 100%;
@@ -8,6 +21,7 @@
   align-items: center;
   align-content: center;
   padding: 5%;
+
   .container {
     display: flex;
     flex: 1;

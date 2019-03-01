@@ -39,3 +39,7 @@ html {
 .interactive {
   cursor: pointer;
 }
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-track-piece {
+  background-image: url("../images/blank.png");
+}

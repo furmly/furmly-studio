@@ -30,6 +30,8 @@ if (process.platform === "win32") {
   app.commandLine.appendSwitch("high-dpi-support", "true");
   app.commandLine.appendSwitch("force-device-scale-factor", "1");
 }
+app.commandLine.appendSwitch("enable-features", "OverlayScrollbar");
+//app.commandLine.appendSwitch("enable-overlay-scrollbar");
 
 function createWindow() {
   // Create the browser window.
@@ -37,7 +39,10 @@ function createWindow() {
     show: false,
     frame: false,
     width: 1440,
-    height: 954
+    height: 954,
+    webPreferences: {
+      scrollBounce: true
+    }
   });
 
   // and load the index.html of the app.

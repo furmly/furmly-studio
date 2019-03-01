@@ -2,14 +2,16 @@
 $divider-color: rgba(0, 0, 0, 0.28);
 $divider-height: 0.0625rem;
 .sideMenuContainer {
-  overflow-y: auto;
+  // overflow-y: auto;
   height: 100%;
   position: relative;
   .user-controls {
-    position: absolute;
+    position: fixed;
+    height: 80px;
     bottom: 0;
     left: 0;
     width: 100%;
+    background: $background-color;
     border-top: $divider-height solid $divider-color;
     box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, 0.12);
     padding: 16px;
@@ -24,11 +26,18 @@ $divider-height: 0.0625rem;
       fill: $accent-color;
     }
   }
+  .actual-menu {
+    height: calc(100% - 80px);
+    overflow-y: overlay;
+  }
   .collapsible {
     .text {
+      position: sticky;
+      top: 0;
+      z-index: 1;
       padding: 12px 12px;
       display: block;
-      position: relative;
+      background: $background-color;
       color: $menu-label;
       &:after {
         content: "";

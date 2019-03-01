@@ -7,6 +7,8 @@ $menu-label: rgb(148, 146, 206);
 $menu-selected: rgba(0, 0, 0, 0.292);
 $menu-hover: rgba(0, 0, 0, 0.068);
 $menu-item-color: white;
+$info-background:rgb(44, 138, 152);
+$info-color:rgb(229, 255, 0);;
 @mixin header {
   height: calc(100% - 32px);
 }

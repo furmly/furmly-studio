@@ -50,6 +50,7 @@ class Dispatcher {
     this.source.send(args);
   }
   send(type, message, waitHandle, keep = false) {
+    
     if (waitHandle) {
       this.waitForEvent(type, waitHandle, keep);
     }

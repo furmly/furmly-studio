@@ -43,27 +43,29 @@ class SideMenu extends React.PureComponent {
   render() {
     return (
       <div className={"sideMenuContainer"}>
-        {(this.state.menu || []).map(x => {
-          return (
-            <div className={"collapsible"} key={x.key}>
-              <span className={"text"}>{x.name}</span>
-              <div className={"content"}>
-                {x.items.map(i => (
-                  <IconButton
-                    label={i.displayLabel}
-                    iconSize={16}
-                    icon={i.icon}
-                    className={`nav-button ${
-                      i == this.state.current ? "current" : ""
-                    }`}
-                    key={i._id}
-                    onClick={() => this.open(i)}
-                  />
-                ))}
+        <div className="actual-menu">
+          {(this.state.menu || []).map(x => {
+            return (
+              <div className={"collapsible"} key={x.key}>
+                <span className={"text"}>{x.name}</span>
+                <div className={"content"}>
+                  {x.items.map(i => (
+                    <IconButton
+                      label={i.displayLabel}
+                      iconSize={16}
+                      icon={i.icon}
+                      className={`nav-button ${
+                        i == this.state.current ? "current" : ""
+                      }`}
+                      key={i._id}
+                      onClick={() => this.open(i)}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
         <div className={"user-controls"}>
           <Icon icon="user-circle" size={42} />
           <span>{this.props.client.getUsername()}</span>

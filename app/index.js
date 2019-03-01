@@ -13,7 +13,7 @@ class App {
   }
 
   init() {
-    ipcMain.on(ipcContants.START_PROXY, (event, { connection, sslConfig }) => {
+    ipcMain.on(ipcContants.START_PROXY, (event, { connection, ...rest }) => {
       if (!connection) {
         return event.sender.send(ipcContants.START_PROXY, {
           started: false,
@@ -36,7 +36,7 @@ class App {
             [
               ".",
               "--start-proxy",
-              JSON.stringify({ connection: url.parse(connection), sslConfig })
+              JSON.stringify({ connection: url.parse(connection), ...rest })
             ],
             {
               stdio: ["ipc"],
@@ -46,18 +46,21 @@ class App {
             }
           );
 
-          this.currentConnection = connection;
-          this.dispatcher = new Dispatcher(this.proxyServer);
-          this.dispatcher.waitForEvent(proxyContants.STARTED, ({ er }) => {
-            event.sender.send(ipcContants.START_PROXY, { started: !er, er });
-          });
-          this.proxyServer.on("exit", code => {
-            debug("proxy server died");
+          const onExit = code => {
+            debug("proxy server died on init.");
             debug("exit code:" + code);
+            this.proxyServer.removeAllListeners();
             this.proxyServer = null;
             this.currentConnection = null;
             event.sender.send(ipcContants.START_PROXY, { started: false });
+          };
+          this.currentConnection = connection;
+          this.dispatcher = new Dispatcher(this.proxyServer);
+          this.dispatcher.waitForEvent(proxyContants.STARTED, ({ er }) => {
+            this.proxyServer.removeListener("exit", onExit);
+            event.sender.send(ipcContants.START_PROXY, { started: !er, er });
           });
+          this.proxyServer.once("exit", onExit);
           this.proxyServer.on("error", er => {
             debug(er);
           });
@@ -69,7 +72,7 @@ class App {
           //send information to the proxy that the configuration has changed.
           this.dispatcher.send(
             proxyContants.CHANGE_CONFIG,
-            { connection: url.parse(connection), sslConfig },
+            { connection: url.parse(connection), ...rest },
             ({ er }) => {
               if (!er) this.currentConnection = connection;
               event.sender.send(ipcContants.START_PROXY, { started: !er });
@@ -82,12 +85,19 @@ class App {
       }
     });
 
-    ipcMain.on(ipcContants.STOP_PROXY, () => {
+    ipcMain.on(ipcContants.STOP_PROXY, event => {
+      debug("stop proxy called...");
       if (this.proxyServer) {
+        debug("proxyserver is running...");
+        this.proxyServer.kill();
         this.proxyServer.removeAllListeners();
-        this.proxyServer.kill(0);
         this.proxyServer = null;
+        debug("server is dead");
+        event.sender.send(ipcContants.STOP_PROXY, true);
+        return;
       }
+      debug("proxy already stopped");
+      event.sender.send(ipcContants.STOP_PROXY, true);
     });
 
     ipcMain.on(ipcContants.PROXY_STATUS, event => {

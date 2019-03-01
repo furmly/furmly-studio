@@ -89,7 +89,12 @@ module.exports = {
   },
   target: "electron-renderer",
   plugins: [
-    new HtmlWebpackPlugin({ title: "Furmly Studio", appMountId: "root" }),
+    new HtmlWebpackPlugin({
+      title: "Furmly Studio",
+      appMountId: "root",
+      template: "./src/assets/index.html",
+      inject: false
+    }),
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       // both options are optional

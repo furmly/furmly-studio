@@ -1,17 +1,21 @@
+import { ipcRenderer } from "electron";
 import React from "react";
 import qs from "query-string";
+import { Icon } from "furmly-base-web";
 import PropTypes from "prop-types";
 import { Switch, Route } from "react-router-dom";
 import SideMenu from "components/SideMenu";
 import FurmlyControls from "furmly-controls";
 import Toast from "../../components/toast";
 import "./style.scss";
-import { Icon } from "furmly-base-web";
+import { ipcSend } from "../../util";
+import Dispatcher from "../../../app/dispatcher";
+import ipcConstants from "../../../app/ipc-constants";
 import Dashboard from "../Dashboard";
 
 const Process = FurmlyControls.PROCESS;
 class Home extends React.Component {
-  async UNSAFE_componentWillMount() {
+  async componentDidMount() {
     await this.props.frame.setTitleAndSideBarComponent("Home", props => (
       <SideMenu
         {...props}
@@ -19,6 +23,14 @@ class Home extends React.Component {
         openMenu={this.props.openProcess}
       />
     ));
+    this.dispatcher = new Dispatcher(
+      ipcRenderer,
+      [ipcConstants.STOP_PROXY],
+      ipcSend
+    );
+  }
+  componentWillUnmount() {
+    this.dispatcher.destructor();
   }
   shouldComponentUpdate(nextProps, nextState) {
     if (
@@ -31,10 +43,18 @@ class Home extends React.Component {
   logout = async () => {
     await this.props.frame.clearSideBarComponent("Login");
     this.props.client.setCredentials(null);
-    setTimeout(() => {
-      this.props.history.push("/");
-      this.props.history.length = 0;
-    }, 1000);
+    this.setState({ busy: true }, () =>
+      this.dispatcher.send(
+        ipcConstants.STOP_PROXY,
+        {},
+        async (sender, closed) => {
+          setTimeout(() => {
+            this.props.history.push("/");
+            this.props.history.length = 0;
+          }, 1000);
+        }
+      )
+    );
   };
   completed = (nextProps, oldProps) => {
     let cancelled;
