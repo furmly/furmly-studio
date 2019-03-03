@@ -4,7 +4,8 @@ import {
   WorkerProvider,
   IconButton,
   FormContainer,
-  ConfirmationDialog
+  ConfirmationDialog,
+  Icon
 } from "furmly-base-web";
 import "brace";
 import "brace/mode/json";
@@ -18,6 +19,7 @@ import Draggable from "./draggable";
 import Panel from "./panel";
 import prefs from "../../preferences";
 import { DESIGNER_CONFIG } from "../../constants";
+import { distributeElements } from "./dagre-util";
 
 require("storm-react-diagrams/src/sass/main.scss");
 
@@ -80,7 +82,7 @@ const createDesigner = (Container, withTemplateCache) => {
             main
           )
         ) {
-          this.refreshGraph();
+          this.refreshGraph(true);
         }
       });
     }
@@ -244,12 +246,11 @@ const createDesigner = (Container, withTemplateCache) => {
 
     //horrible hack to get react storm diagram thing to refresh properly;
     //hope the author fixes sometime ever.
-    refreshGraph = () => {
+    refreshGraph = autoLayout => {
       const model = new SRD.DiagramModel();
-      model.deSerializeDiagram(
-        this.diagramModel.serializeDiagram(),
-        this.engine
-      );
+      let serializedDiagram = this.diagramModel.serializeDiagram();
+      if (autoLayout) serializedDiagram = distributeElements(serializedDiagram);
+      model.deSerializeDiagram(serializedDiagram, this.engine);
       let nodes = model.getNodes();
       Object.keys(nodes).forEach(x => {
         nodes[x].addListener({
@@ -257,6 +258,7 @@ const createDesigner = (Container, withTemplateCache) => {
           entityRemoved: this.removed
         });
       });
+
       this.diagramModel = model;
       this.engine.setDiagramModel(this.diagramModel);
       nodes = this.diagramModel.getNodes();
@@ -397,9 +399,18 @@ const createDesigner = (Container, withTemplateCache) => {
           <Panel>
             {(relationships &&
               currentNode &&
-              relationships[currentNode.name] &&
-              relationships[currentNode.name].map(x =>
-                this._renderRelationship(x)
+              relationships[currentNode.name] && (
+                <React.Fragment>
+                  {relationships[currentNode.name].map(x =>
+                    this._renderRelationship(x)
+                  )}
+                  <FormContainer className="info">
+                    <label>
+                      <Icon icon="info-circle" /> Please drag and drop
+                      components to add.
+                    </label>
+                  </FormContainer>
+                </React.Fragment>
               )) ||
               null}
           </Panel>

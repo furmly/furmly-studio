@@ -19,6 +19,7 @@ class Home extends React.Component {
     await this.props.frame.setTitleAndSideBarComponent("Home", props => (
       <SideMenu
         {...props}
+        location={this.props.location}
         logout={this.logout}
         openMenu={this.props.openProcess}
       />

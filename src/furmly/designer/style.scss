@@ -19,11 +19,18 @@
     height: 100%;
     width: 100%;
   }
+  .info {
+    @extend %info;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+  }
   .graph-container {
     flex: 1;
   }
   .panel {
     .content {
+      position: relative;
       display: flex;
       flex-direction: column;
       border-top: rgb(28, 27, 47) solid 1px;
@@ -51,7 +58,7 @@
     flex: 0.5;
   }
   .panel.collapsed {
-    width: 20px;
+    width: 25px;
     .content {
       display: none;
     }

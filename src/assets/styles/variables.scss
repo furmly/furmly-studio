@@ -17,3 +17,12 @@ $info-color:rgb(229, 255, 0);;
   height: 0.0625rem;
   background: rgba(0, 0, 0, 0.28);
 }
+%info {
+  font-family: Lato;
+  background: $info-background;
+  color: $info-color;
+  font-size: 14px;
+  svg {
+    fill: $info-color;
+  }
+}

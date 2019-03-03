@@ -18,7 +18,6 @@ export default {
   factor: 1.2,
   modalBackgroundColor: "rgb(40, 39, 64)",
   dropDownMenuColor: "rgb(28,27,47)",
-  errorColor: "#ab0101",
-  errorForeground: "white",
+  errorColor: "#ff6565",
   dividerColor: "rgb(28, 27, 47)"
 };

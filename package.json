@@ -75,6 +75,7 @@
   "dependencies": {
     "body-parser": "^1.18.3",
     "config": "^2.0.2",
+    "dagre": "^0.8.4",
     "debug": "^3.2.6",
     "electron-store": "^2.0.0",
     "furmly-base-web": "^1.1.12",

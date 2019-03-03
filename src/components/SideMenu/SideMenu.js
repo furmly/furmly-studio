@@ -5,10 +5,10 @@ import "./style.scss";
 
 class SideMenu extends React.PureComponent {
   state = {
-    menu: [],
-    current: null
+    menu: []
   };
-  async UNSAFE_componentWillMount() {
+  async componentDidMount() {
+    window.addEventListener("hashchange", this.onhashchange);
     let menu = await this.props.client.getMenu();
     const categories = {};
     menu = menu.reduce((sum, x) => {
@@ -19,6 +19,7 @@ class SideMenu extends React.PureComponent {
       sum[categories[x.group]].items.push(x);
       return sum;
     }, []);
+
     menu.unshift({
       name: "Home",
       items: [
@@ -32,15 +33,23 @@ class SideMenu extends React.PureComponent {
       ],
       key: "home"
     });
-    this.setState({ menu, current: menu[menu.length - 1][0] });
+    this.setState({ menu });
   }
+  componentWillUnmount() {
+    window.removeEventListener("hashchange", this.onhashchange);
+  }
+  onhashchange = () => {
+    this.forceUpdate();
+  };
   open = async x => {
     await this.props.frame.setSubtitle(x.displayLabel);
-    this.setState({ current: x });
     this.props.openMenu(x);
   };
 
   render() {
+    const pathArr = window.location.hash.split("?")[0].split("/");
+    const currentPath = pathArr[pathArr.length - 1];
+
     return (
       <div className={"sideMenuContainer"}>
         <div className="actual-menu">
@@ -55,7 +64,7 @@ class SideMenu extends React.PureComponent {
                       iconSize={16}
                       icon={i.icon}
                       className={`nav-button ${
-                        i == this.state.current ? "current" : ""
+                        i.value == currentPath ? "current" : ""
                       }`}
                       key={i._id}
                       onClick={() => this.open(i)}
@@ -83,7 +92,8 @@ SideMenu.propTypes = {
   client: PropTypes.object,
   frame: PropTypes.object,
   openMenu: PropTypes.func.isRequired,
-  logout: PropTypes.func.isRequired
+  logout: PropTypes.func.isRequired,
+  location: PropTypes.object.isRequired
 };
 
 export default SideMenu;
