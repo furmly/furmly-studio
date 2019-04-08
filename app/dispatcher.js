@@ -1,12 +1,19 @@
 const debug = require("debug")("dispatcher");
 class Dispatcher {
-  constructor(source, eventNames = ["message"], _send) {
+  constructor(
+    source,
+    eventNames = ["message"],
+    _send,
+    ignoreUnknownMessages = false
+  ) {
     if (!source) throw new Error("Event source cannot be null");
     this.waitForEvent = this.waitForEvent.bind(this);
     this.waitHandles = {};
     this.source = source;
     this.customSend = _send;
+    this._debugName = "dispatcher";
     this._handlers = [];
+    this.ignoreUnknownMessages = ignoreUnknownMessages;
     eventNames.forEach(name => {
       const handler = this.onEvent.bind(this, name);
       this.source.on(name, handler);
@@ -28,14 +35,18 @@ class Dispatcher {
     const type = args0.type || eventName;
     if (!args0) throw new Error("Message is missing dispatch information.");
 
-    if (!this.waitHandles[type] || !this.waitHandles[type].length)
+    if (!this.waitHandles[type] || !this.waitHandles[type].length) {
+      if (this.ignoreUnknownMessages) return;
       throw new Error(
-        `Missing wait handles for message ${eventName} ${JSON.stringify(
+        `${
+          this._debugName
+        }: Missing wait handles for message ${eventName} ${JSON.stringify(
           args,
           null,
           " "
         )}`
       );
+    }
 
     debug(`wait handles:${JSON.stringify(this.waitHandles, null, " ")}`);
     const { fn, keep } = this.waitHandles[type].shift();
@@ -50,7 +61,6 @@ class Dispatcher {
     this.source.send(args);
   }
   send(type, message, waitHandle, keep = false) {
-    
     if (waitHandle) {
       this.waitForEvent(type, waitHandle, keep);
     }

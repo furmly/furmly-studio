@@ -29,7 +29,9 @@ class Login extends React.Component {
       username: "",
       password: "",
       server: "",
-      servers: preferences.getObj(SERVER) || [{ uri: "http://localhost:5000" }]
+      servers: preferences.getObj(SERVER) || [
+        { uri: "http://furmly-demo.herokuapp.com:80" }
+      ]
     };
   }
 
@@ -44,6 +46,9 @@ class Login extends React.Component {
     this.dispatcher.destructor();
   }
 
+  getSelectedServer = () => {
+    return this.state.servers.find(x => x.uri == this.state.server);
+  };
   usernameChanged = username => {
     this.setState({ username });
   };
@@ -63,13 +68,17 @@ class Login extends React.Component {
     });
   };
   doLogin = () => {
+    const { uri, ...rest } = this.getSelectedServer() || {};
     this.setState({ error: "", busy: true }, () =>
       this.dispatcher.send(
         ipcConstants.START_PROXY,
         {
-          connection: this.state.server
+          connection: uri,
+          username: this.state.username,
+          ...rest
         },
         async (sender, { started, er }) => {
+          let error;
           try {
             if (er) return this.setState({ error: er, busy: false });
             const { username, password } = this.state;
@@ -78,15 +87,16 @@ class Login extends React.Component {
                 username,
                 password
               });
-              const cred = { ...result, username };
+              const cred = { ...result, username, uri };
               preferences.set(CREDENTIALS, cred);
               this.props.client.setCredentials(cred);
               this.props.history.push("/home");
               this.props.history.length = 0;
             }
           } catch (e) {
-            this.setState({ error: e.message, busy: false });
+            error = e.message;
           }
+          this.setState({ error, busy: false });
         }
       )
     );
@@ -135,7 +145,7 @@ class Login extends React.Component {
                 />
                 <FormContainer>
                   <Button intent={"DEFAULT"} onClick={this.openNewServer}>
-                    Add new item
+                    Manage connections
                   </Button>
                 </FormContainer>
                 <FormContainer>

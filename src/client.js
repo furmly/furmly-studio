@@ -58,6 +58,9 @@ class Client {
   getUsername() {
     return this.credentials.username;
   }
+  getServer() {
+    return this.credentials.uri;
+  }
 }
 
 export default Client;

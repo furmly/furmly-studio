@@ -2,8 +2,9 @@ const prefs = require("./src/preferences").default;
 const qs = require("querystring");
 const { CREDENTIALS } = require("./src/constants");
 module.exports = {
+  uiOnDemand: false,
   waitingProcessors: [],
-  baseUrl: `https://localhost:${process.env.FURMLY_STUDIO_PORT}`,
+  baseUrl: `http://localhost:${process.env.FURMLY_STUDIO_PORT}`,
   preDispatch: function(action) {
     if (!action.headers) action.headers = {};
     action.headers.Authorization = `Bearer ${

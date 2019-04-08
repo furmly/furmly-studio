@@ -17,7 +17,7 @@ export const withClientProvider = WrappedComponent => {
       //get client context from store.
       this.setState({
         client: new Client(
-          `https://localhost:${process.env.FURMLY_STUDIO_PORT || 3330}`,
+          `http://localhost:${process.env.FURMLY_STUDIO_PORT || 3330}`,
           preferences.getObj(CREDENTIALS)
         )
       });

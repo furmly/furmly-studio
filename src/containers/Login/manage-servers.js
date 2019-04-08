@@ -1,6 +1,7 @@
 import React from "react";
 import { Input, Button, List, FormContainer, Icon } from "furmly-base-web";
 import preferences from "../../preferences";
+import FileSelector from "../../components/FileSelector";
 export const SERVER = "BACKEND_SERVER";
 const rowTemplate = {
   name: "expression",
@@ -11,21 +12,23 @@ const rowTemplate = {
 class ManageServers extends React.Component {
   state = {
     index: -1,
-    sslFolder: "",
     uri: "",
-    clientCertName: "",
-    clientPrivateKeyName: "",
+    clientCertDir: "",
     caCertName: "",
+    proxyKey: "",
+    proxyCert: "",
     uris: preferences.getObj(SERVER) || []
   };
   reset = () => {
     return {
       uri: "",
-      sslFolder: "",
       index: -1,
-      clientCertName: "",
+      clientCertDir: "",
       clientPrivateKeyName: "",
-      caCertName: ""
+      caCertName: "",
+      proxyKey: "",
+      proxyCert: "",
+      error: null
     };
   };
   setUri = uri => {
@@ -34,15 +37,17 @@ class ManageServers extends React.Component {
   setCa = caCertName => {
     this.setState({ caCertName });
   };
-  setClientCert = clientCertName => {
-    this.setState({ clientCertName });
+  setClientCertDir = clientCertDir => {
+    this.setState({ clientCertDir });
   };
-  setClientPrivateKey = clientPrivateKeyName => {
-    this.setState({ clientPrivateKeyName });
+
+  setProxyCert = proxyCert => {
+    this.setState({ proxyCert });
   };
-  setSSLFolder = sslFolder => {
-    this.setState({ sslFolder });
+  setProxyPrivateKey = proxyKey => {
+    this.setState({ proxyKey });
   };
+
   removeUri = index => {
     const uris = this.state.uris.slice();
     uris.splice(index, 1);
@@ -61,13 +66,23 @@ class ManageServers extends React.Component {
     this.setState({ ...this.reset() });
   };
   saveUri = () => {
+    const { clientCertDir, caCertName, proxyCert, proxyKey, uri } = this.state;
+    if (
+      uri.indexOf("https") !== -1 &&
+      (!clientCertDir || !proxyCert || !proxyKey)
+    ) {
+      return this.setState({
+        error:
+          "https requires Client Certificate , Proxy Certificate and Proxy Certificate Key"
+      });
+    }
     const uris = this.state.uris.slice();
     const obj = {
-      uri: this.state.uri,
-      sslFolder: this.state.sslFolder,
-      clientCertName: this.state.clientCertName,
-      clientPrivateKeyName: this.state.clientPrivateKeyName,
-      caCertName: this.state.caCertName
+      uri,
+      clientCertDir,
+      caCertName,
+      proxyKey,
+      proxyCert
     };
     if (this.state.index >= 0) {
       uris[this.state.index] = obj;
@@ -97,6 +112,9 @@ class ManageServers extends React.Component {
             The remote location of the furmly server you are trying to connect
             to. Furmly uses client certificates to allow the user access to some
             features.
+            <span className="error">
+              <b>{this.state.error}</b>
+            </span>
           </span>
         </FormContainer>
 
@@ -105,33 +123,34 @@ class ManageServers extends React.Component {
           label={"Uri"}
           valueChanged={this.setUri}
         />
-        <Input
-          value={this.state.sslFolder}
-          label={"SSL Certificate Directory"}
+        <FileSelector
+          value={this.state.clientCertDir}
+          label={"Client certificate dir name"}
+          valueChanged={this.setClientCertDir}
+          dialogProperties={["openDirectory"]}
           description={
-            "This directory would contain all the certificates required to successfully connect to this domain"
-          }
-          valueChanged={this.setSSLFolder}
-        />
-        <Input
-          value={this.state.clientCertName}
-          label={"Client certificate file name"}
-          valueChanged={this.setClientCert}
-          description={
-            "The name of the certificate file that would be used by furmly to authorize sensitive actions"
+            "Directory containing client certificates and keys. Certificates should be saved with {username}-crt.{extension} file name and {username}-key.{extension} for the private key"
           }
         />
-        <Input
-          value={this.state.clientPrivateKeyName}
-          label={"Client certificate private key file name"}
-          valueChanged={this.setClientPrivateKey}
+        <FileSelector
+          value={this.state.proxyCert}
+          label={"Proxy certificate file name"}
+          valueChanged={this.setProxyCert}
           description={
-            "The name of the private key file for the Client Certificate above."
+            "The path to the certificate file that would be used by furmly to authorize sensitive actions"
           }
         />
-        <Input
+        <FileSelector
+          value={this.state.proxyKey}
+          label={"Proxy certificate private key file name"}
+          valueChanged={this.setProxyPrivateKey}
+          description={
+            "The path to the private key file for the Proxy Certificate above."
+          }
+        />
+        <FileSelector
           value={this.state.caCertName}
-          label={"CA certificate ( needed for self signed certificates )"}
+          label={"CA certificate path (needed for self signed certificates )"}
           valueChanged={this.setCa}
         />
         <FormContainer>

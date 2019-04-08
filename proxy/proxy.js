@@ -6,7 +6,6 @@ const jwtDecoder = require("jwt-decode");
 const config = require("../config");
 const Dispatcher = require("../app/dispatcher");
 const fs = require("fs");
-const path = require("path");
 const bodyParser = require("body-parser").json();
 const url = require("url");
 const { cors, sendError } = require("./utils");
@@ -55,17 +54,13 @@ class ProxyServer {
     };
     this.serverConfig.server_url = url.format(this.serverConfig.connection);
     this.proxyPort = cfg.proxyPort || config.app.port;
-    let sslFolder;
-    if (typeof cfg.sslFolder !== "undefined") {
-      sslFolder = cfg.sslFolder;
-    }
-    if (!sslFolder) sslFolder = config.app.sslFolder;
+    this.username = cfg.username;
+
     this.sslConfig = {
-      clientCert: `${sslFolder}/${cfg.clientCertName ||
-        config.app.certificatePath}`,
-      clientKey: `${sslFolder}/${cfg.clientPrivateKeyName ||
-        config.app.certificateKeyPath}`,
-      caCert: `${sslFolder}/${cfg.caCertName || config.app.caCertificatePath}`
+      proxyCert: cfg.proxyCert,
+      proxyKey: cfg.proxyKey,
+      clientCertDir: cfg.clientCertDir,
+      caCert: cfg.caCertName
     };
   }
   refreshToken(req, res) {
@@ -192,6 +187,7 @@ class ProxyServer {
   }
   setupDispatcher() {
     this.dispatcher = new Dispatcher(this.context);
+    this.dispatcher._debugName = "proxy";
     this.dispatcher.waitForEvent(
       constants.STATUS,
       (...respond) => {
@@ -210,6 +206,7 @@ class ProxyServer {
         const resp = respond[respond.length - 1];
         try {
           this.setConfig(respond[0]);
+          this.setupProxy();
           resp();
         } catch (er) {
           return resp({ er });
@@ -218,31 +215,51 @@ class ProxyServer {
       true
     );
   }
+  isSecure() {
+    return this.serverConfig.connection.protocol == "https";
+  }
+  setupProxy() {
+    debug(this.sslConfig);
+    const target = {};
+    const isSecure = this.isSecure();
+    Object.assign(target, this.serverConfig.connection);
+    if (isSecure) {
+      Object.assign(target, {
+        key: fs.readFileSync(
+          `${this.sslConfig.clientCertDir}/${this.username}-key.pem`
+        ),
+        cert: fs.readFileSync(
+          `${this.sslConfig.clientCertDir}/${this.username}-crt.pem`
+        ),
+        https: true
+      });
+      if (this.sslConfig.caCert) {
+        target.ca = fs.readFileSync(this.sslConfig.caCert);
+      }
+    }
+
+    this.proxy = httpProxy.createProxy({
+      target,
+      secure: this.context.env.NODE_ENV === "production",
+      changeOrigin: true
+    });
+  }
   start() {
     try {
       this.status = STARTING;
       this.setupDispatcher();
-      this.proxy = httpProxy.createProxy({
-        target: Object.assign({}, this.serverConfig.connection, {
-          key: fs.readFileSync(this.sslConfig.clientKey),
-          cert: fs.readFileSync(this.sslConfig.clientCert),
-          ca: fs.readFileSync(this.sslConfig.caCert),
-          https: true
-        }),
-        secure: this.context.env.NODE_ENV === "production",
-        changeOrigin: true
-      });
-      this.server = https.createServer(
-        {
-          key: fs.readFileSync(
-            path.join(__dirname, "../ssl/proxy-server-key.pem")
-          ),
-          cert: fs.readFileSync(
-            path.join(__dirname, "../ssl/proxy-server-crt.pem")
-          )
-        },
-        this.onRequest
-      );
+      this.setupProxy();
+      // if (isSecure) {
+      //   this.server = https.createServer(
+      //     {
+      //       key: fs.readFileSync(this.sslConfig.proxyKey),
+      //       cert: fs.readFileSync(this.sslConfig.proxyCert)
+      //     },
+      //     this.onRequest
+      //   );
+      // } else {
+      this.server = http.createServer(this.onRequest);
+      // }
 
       this.server.on("error", er => {
         debug("something catastrophic may have occurred in proxy server \n\n");
@@ -262,7 +279,11 @@ class ProxyServer {
         this.context.send({ type: constants.STARTED });
       });
     } catch (er) {
-      this.context.send({ type: constants.STARTED, er });
+      this.started = false;
+      this.status = STOPPED;
+      this.proxy = null;
+      this.context.send({ type: constants.STARTED, er: er.message });
+      process.exit(1);
     }
   }
 }

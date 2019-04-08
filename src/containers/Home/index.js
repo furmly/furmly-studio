@@ -25,5 +25,5 @@ const showMessage = store => next => action => {
 export default FurmlyControls.createPage(
   withRouter(withClient(withFrame(Home))),
   null,
-  [routerMiddleware(history), showMessage]
+  { extraMiddlewares: [routerMiddleware(history), showMessage] }
 );

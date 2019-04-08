@@ -20,7 +20,7 @@ const furmlyClient2 = path.resolve(
 const furmlyFonts = furmly + "\\*.ttf";
 const worker = furmly + "/worker.js";
 const dist = path.resolve(__dirname, "dist");
-
+const startArgs = JSON.parse(process.env.args || "[]");
 module.exports = {
   module: {
     rules: [
@@ -110,13 +110,14 @@ module.exports = {
   devtool: "source-map",
   devServer: {
     contentBase: [path.resolve(__dirname, "dist")],
+    port: 9990,
     stats: {
       colors: true,
       chunks: false,
       children: false
     },
     before() {
-      spawn("electron", ["."], {
+      spawn("electron", [".", ...startArgs], {
         shell: true,
         env: process.env,
         stdio: "inherit"

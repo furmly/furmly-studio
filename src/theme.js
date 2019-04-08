@@ -5,6 +5,7 @@ injectFontsAndCSSBase(
   "background:rgba(0, 192, 255, 0.46);"
 );
 export const inputColor = "white";
+export const labelColor = "rgb(148, 146, 206)";
 export default {
   labelBackgroundColor: "rgb(28, 27, 47)",
   secondaryBackgroundColor: "#201f35",
@@ -12,7 +13,7 @@ export default {
   copyColor: "whitesmoke",
   inputBackgroundColor: "rgb(28,27,47)",
   formComponentBackgroundColor: "transparent",
-  labelColor: "rgb(148, 146, 206)",
+  labelColor,
   inputColor,
   accentColor: "orange",
   factor: 1.2,

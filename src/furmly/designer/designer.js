@@ -68,7 +68,7 @@ const createDesigner = (Container, withTemplateCache) => {
      */
     UNSAFE_componentWillMount() {
       this.createRelationships(() => {
-        //populate global template cache with designer template cache.
+        //populate global template cache with designer templates.
         this.populateTemplateCache();
         const nodes = this.engine.getDiagramModel().getNodes();
         const main = nodes[Object.keys(nodes)[0]];
@@ -89,7 +89,14 @@ const createDesigner = (Container, withTemplateCache) => {
     /**
      * This creates all the nodes to match the value of the data as at mount.
      */
-    rehydrate = (entityName, value, currentNode, existingNode, rel) => {
+    rehydrate = (
+      entityName,
+      value,
+      currentNode,
+      existingNode,
+      rel,
+      entityIndex = 0
+    ) => {
       if (value) {
         const item = this.getItem(entityName);
         const { has = null, hasMany = null } = item.relationships || {};
@@ -105,8 +112,15 @@ const createDesigner = (Container, withTemplateCache) => {
           if (path) {
             // this is a dependency.
             if (Array.prototype.isPrototypeOf(value[x])) {
-              value[x].forEach(v => {
-                this.rehydrate(name, v, node, null, { key: name, value: path });
+              value[x].forEach((v, index) => {
+                this.rehydrate(
+                  name,
+                  v,
+                  node,
+                  null,
+                  { key: name, value: path },
+                  index
+                );
               });
             } else {
               this.rehydrate(name, value[x], node, null, {
@@ -119,7 +133,7 @@ const createDesigner = (Container, withTemplateCache) => {
           sum[x] = value[x];
           return sum;
         }, {});
-        node.extras = properties;
+        node.extras = { ...properties, index: entityIndex };
         return true;
       }
       return false;
@@ -192,6 +206,11 @@ const createDesigner = (Container, withTemplateCache) => {
         this.props.valueChanged({ [this.props.name]: value });
       }
     };
+    sortBy = (a, b) => {
+      const x = typeof a.index === "undefined" ? -1 : a.index;
+      const y = typeof b.index === "undefined" ? -1 : b.index;
+      return x - y;
+    };
     updateTree = node => {
       if (!node) return undefined;
       const value = { ...node.extras };
@@ -203,7 +222,7 @@ const createDesigner = (Container, withTemplateCache) => {
           const list = Object.keys(links).map(v => {
             return this.updateTree(links[v].getTargetPort().getParent()); // add this to the list
           });
-          sum[x.getName()] = list;
+          sum[x.getName()] = list.sort(this.sortBy);
         }
         if (getPath(has, x.getName())) {
           sum[x.getName()] = this.updateTree(
@@ -220,10 +239,7 @@ const createDesigner = (Container, withTemplateCache) => {
         this.setState({ currentNode: event.entity });
         return;
       }
-      // else {
-      //   // asynchronously update tree.
-      //   this.processValue();
-      // }
+
       if (!this.diagramModel.getSelectedItems().length) {
         this.setState({ currentNode: null, changed: false });
       }
@@ -355,14 +371,22 @@ const createDesigner = (Container, withTemplateCache) => {
     toggleSource = () => {
       this.setState({ viewSource: !this.state.viewSource });
     };
-    formValueChanged = form => {
+    formValueChanged = (form, edit) => {
       const { currentNode } = this.state;
       currentNode.extras = form;
+      currentNode.$edit = edit;
       this.setState({
         changed: true,
         currentNode
       });
       this.processValue(true);
+    };
+    formIntermediateValueChanged = value => {
+      const { currentNode } = this.state;
+      currentNode.$edit = value;
+      this.setState({
+        currentNode
+      });
     };
     removeNode = (node = this.state.currentNode) => {
       node.extras = undefined;
@@ -434,11 +458,18 @@ const createDesigner = (Container, withTemplateCache) => {
                   className={"editor"}
                   value={
                     (currentNode &&
-                      JSON.stringify(currentNode.extras, null, " ")) ||
-                    null
+                      (currentNode.$edit ||
+                        JSON.stringify(currentNode.extras, null, " "))) ||
+                    ""
                   }
                   onChange={e => {
-                    this.formValueChanged(JSON.parse(e));
+                    let valid;
+                    try {
+                      valid = JSON.parse(e);
+                      this.formValueChanged(valid, e);
+                    } catch (e) {
+                      this.formIntermediateValueChanged(e);
+                    }
                   }}
                   mode={"json"}
                   theme={"monokai"}

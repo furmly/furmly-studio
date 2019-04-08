@@ -100,22 +100,27 @@ class Home extends React.Component {
     let fetchParams = qs.parse(this.props.location.search),
       currentStep = (fetchParams && fetchParams.currentStep) || 0;
     return (
-      <div className="homePage">
-        <Switch>
-          <Route
-            path={`${this.props.match.url}/furmly/:processId`}
-            component={({ match }) => (
-              <Process
-                id={match.params.processId}
-                currentStep={currentStep}
-                fetchParams={fetchParams}
-                processCompleted={this.completed}
-              />
-            )}
-          />
-          <Route path={`${this.props.match.url}/`} component={Dashboard} />
-        </Switch>
-      </div>
+      <React.Fragment>
+        <div className="homePage">
+          <Switch>
+            <Route
+              path={`${this.props.match.url}/furmly/:processId`}
+              component={({ match }) => (
+                <Process
+                  id={match.params.processId}
+                  currentStep={currentStep}
+                  fetchParams={fetchParams}
+                  processCompleted={this.completed}
+                />
+              )}
+            />
+            <Route path={`${this.props.match.url}/`} component={Dashboard} />
+          </Switch>
+        </div>
+        <div className="footer">
+          <span className={"server"}>🌎&nbsp;{this.props.client.getServer()}</span>
+        </div>
+      </React.Fragment>
     );
   }
 }
