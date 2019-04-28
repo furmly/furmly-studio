@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { IconButton, Icon } from "furmly-base-web";
 import "./style.scss";
 
+
 class SideMenu extends React.PureComponent {
   state = {
     menu: []
@@ -39,6 +40,7 @@ class SideMenu extends React.PureComponent {
     window.removeEventListener("hashchange", this.onhashchange);
   }
   onhashchange = () => {
+   
     this.forceUpdate();
   };
   open = async x => {

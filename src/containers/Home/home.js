@@ -114,11 +114,19 @@ class Home extends React.Component {
                 />
               )}
             />
-            <Route path={`${this.props.match.url}/`} component={Dashboard} />
+            <Route
+              path={`${this.props.match.url}/`}
+              component={() => (
+                <Dashboard openProcess={this.props.openProcess} />
+              )}
+            />
           </Switch>
         </div>
         <div className="footer">
-          <span className={"server"}>🌎&nbsp;{this.props.client.getServer()}</span>
+          <small className={"server"}>
+            🌎:&nbsp;<b>{this.props.client.getServer()}</b>
+            <span className="love">made with 🧡 in Lagos</span>
+          </small>
         </div>
       </React.Fragment>
     );

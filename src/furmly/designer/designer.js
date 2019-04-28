@@ -45,6 +45,7 @@ const createDesigner = (Container, withTemplateCache) => {
     constructor(props) {
       super(props);
       this.diagramModel = new SRD.DiagramModel();
+      this.diagramModel.setZoomLevel(80);
       this.engine = new SRD.DiagramEngine();
       this.config = prefs.getObj(DESIGNER_CONFIG) || this.getDefaultSettings();
       this.engine.installDefaultFactories();
@@ -264,6 +265,7 @@ const createDesigner = (Container, withTemplateCache) => {
     //hope the author fixes sometime ever.
     refreshGraph = autoLayout => {
       const model = new SRD.DiagramModel();
+
       let serializedDiagram = this.diagramModel.serializeDiagram();
       if (autoLayout) serializedDiagram = distributeElements(serializedDiagram);
       model.deSerializeDiagram(serializedDiagram, this.engine);

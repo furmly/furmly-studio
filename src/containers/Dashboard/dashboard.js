@@ -11,13 +11,15 @@ class Dashboard extends React.Component {
       label: "Processes",
       icon: "laptop",
       copy: `Processes are the primary building blocks of furmly.
-       Every thing an end user sees starts from a process. Processes must contain atleast one step.`
+       Every thing an end user sees starts from a process. Processes must contain atleast one step.`,
+      uid: "MANAGE_PROCESS"
     },
     lib: {
       label: "Libraries",
       icon: "book",
       copy: `Libraries are reusable pieces of code. 
-      Classes/Functions that you use often should be turned to libraries. They are callable in processors of all types.`
+      Classes/Functions that you use often should be turned to libraries. They are callable in processors of all types.`,
+      uid: "MANAGE_LIBS"
     },
     asyncValidator: {
       label: "Asynchronous Validators",
@@ -29,7 +31,8 @@ class Dashboard extends React.Component {
       label: "Processors",
       icon: "microchip",
       copy: `Processors are pieces of code that can be executed in a number of places. 
-      Their primary use case is when a user finishes filling a form and submits.`
+      Their primary use case is when a user finishes filling a form and submits.`,
+      uid: "MANAGE_PROCESSOR"
     },
     step: {
       label: "Steps",
@@ -41,25 +44,34 @@ class Dashboard extends React.Component {
       label: "Users",
       icon: "users",
       copy: `The number of registered Users in the system.
-      Users can have multiple Roles. Users can have multiple claims.`
+      Users can have multiple Roles. Users can have multiple claims.`,
+      uid: "MANAGE_USER"
     },
     menu: {
       label: "Menus",
       icon: "bars",
       copy: `Menu items that appear on the front-end web/mobile application. 
-      Menu items can target specific clients and Domains`
+      Menu items can target specific clients and Domains`,
+      uid: "MANAGE_MENU"
+    },
+    domain: {
+      label: "Domains",
+      icon: "globe-africa",
+      copy: "Domains are a means of creating namespaces across "
     },
     claim: {
       label: "Claims",
       icon: "lock",
       copy: `Claims are the primary means of authorizing what features a user has access to.
-      Users can be assigned claims directly or they can be assigned to `
+      Users can be assigned claims directly or they can be assigned to roles.`,
+      uid: "MANAGE_CLAIMS"
     },
     role: {
       label: "Roles",
       icon: "users-cog",
       copy: `Roles are means of determining what features a user has access to. 
-      Roles have mutiple claims`
+      Roles have mutiple claims`,
+      uid: "MANAGE_ROLES"
     }
   };
   async componentDidMount() {
@@ -72,6 +84,12 @@ class Dashboard extends React.Component {
       this.setState({ busy: false });
     }
   }
+  openProcess = x => {
+    this.props.openProcess({
+      value: x.uid,
+      type: "FURMLY"
+    });
+  };
   render() {
     return (
       <div className="dashboardPage">
@@ -86,7 +104,16 @@ class Dashboard extends React.Component {
               <div key={x.key} className="card">
                 <div className="content">
                   <div className="card-title">
-                    <h3>{this.mapping[x.key].label}</h3>
+                    <h3>
+                      {this.mapping[x.key].label}{" "}
+                      {(this.mapping[x.key].uid && (
+                        <Icon
+                          onClick={() => this.openProcess(this.mapping[x.key])}
+                          icon={"link"}
+                        />
+                      )) ||
+                        null}
+                    </h3>
                     <Icon icon={this.mapping[x.key].icon} size={32} />
                   </div>
                   <h1 className="count">{x.total}</h1>
@@ -102,6 +129,7 @@ class Dashboard extends React.Component {
 }
 
 Dashboard.propTypes = {
-  client: PropTypes.object
+  client: PropTypes.object,
+  openProcess: PropTypes.func.isRequired
 };
 export default Dashboard;

@@ -17,6 +17,7 @@ export default {
   inputColor,
   accentColor: "orange",
   factor: 1.2,
+  progressBarColor: "white",
   modalBackgroundColor: "rgb(40, 39, 64)",
   dropDownMenuColor: "rgb(28,27,47)",
   errorColor: "#ff6565",
