@@ -141,6 +141,7 @@ class Login extends React.Component {
                   value={this.state.server}
                   keyProperty={["uri"]}
                   valueChanged={this.serverChanged}
+                  getKeyValue={x => x.uri}
                   displayProperty="uri"
                 />
                 <FormContainer>

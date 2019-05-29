@@ -21,9 +21,11 @@ $divider-height: 0.0625rem;
     span {
       vertical-align: top;
     }
-    svg {
+    svg,
+    .fas {
       float: left;
       fill: $accent-color;
+      color: $accent-color;
     }
   }
   .actual-menu {
@@ -67,11 +69,12 @@ $divider-height: 0.0625rem;
           }
           background-color: $menu-selected;
         }
-        svg {
+        svg,.fas {
           width: 14px;
           height: 14px;
           margin-right: 20px;
           fill: $menu-item-color;
+          color:$menu-item-color;
         }
         padding-left: 16px;
         padding-top: 6px;

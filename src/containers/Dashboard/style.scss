@@ -43,7 +43,8 @@
       padding: 25px;
       background: rgba(0, 0, 0, 0.197);
       position: relative;
-      & svg {
+      & svg,
+      & .fas {
         fill: white;
         margin-top: -8px;
       }
@@ -61,6 +62,9 @@
       &:hover {
         svg {
           fill: $accent-color;
+        }
+        .fa {
+          color: $accent-color;
         }
         .count {
           display: none;

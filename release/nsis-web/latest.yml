@@ -1,14 +1,14 @@
 version: 1.0.0
 files:
   - url: furmly-studio-web-setup-1.0.0.exe
-    sha512: 0FjaQndrB84uNiT2YOf2Rm6IIVOtqIsHkHHWGekzFmegYMuAZqCvYbtamwgQi2DUV0aado1rUn7LlXS3jThV6Q==
+    sha512: S7bqRMavNVv8ZCSWOIP45M+0MGk5dfhHwIXRQ1amb6hGvqtw1ylpaGHDjG/0iVwtjF/XKiieamf00JFVTB01wg==
 path: furmly-studio-web-setup-1.0.0.exe
-sha512: 0FjaQndrB84uNiT2YOf2Rm6IIVOtqIsHkHHWGekzFmegYMuAZqCvYbtamwgQi2DUV0aado1rUn7LlXS3jThV6Q==
+sha512: S7bqRMavNVv8ZCSWOIP45M+0MGk5dfhHwIXRQ1amb6hGvqtw1ylpaGHDjG/0iVwtjF/XKiieamf00JFVTB01wg==
 packages:
   x64:
-    size: 41412956
-    sha512: THSayYXKyDKDOav21yExH3tsMxdSmn2k/VXin8kDU0eT0aoPHgpHBfEAUIM5NSco0UJGdBj0i3ahMxtZ95ympA==
-    blockMapSize: 43930
+    size: 41499644
+    sha512: KUmdSrs/qFdI6UtnXED2kuTUYKEFJO1TthdsCIu9i4t3R/gpe4AcNYHcOmCY5Hn6NjNTm+Sm8lQBolSh91nv/A==
+    blockMapSize: 43884
     path: furmly-studio-1.0.0-x64.nsis.7z
     file: furmly-studio-1.0.0-x64.nsis.7z
-releaseDate: '2019-02-26T22:13:21.892Z'
+releaseDate: '2019-05-02T19:44:55.029Z'

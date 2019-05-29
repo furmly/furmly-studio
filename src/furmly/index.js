@@ -1,6 +1,7 @@
 import { setup } from "furmly-base-web";
 import router from "furmly-react-router-web-addons";
 import Script from "./script";
+import JsonViewer from "./json-viewer";
 import createDesigner from "./designer";
 
 const config = {
@@ -17,6 +18,7 @@ const extend = (map, _defaultMap, Deffered) => {
     [new Deffered("container"), map.withTemplateCache],
     createDesigner
   );
+  map.JSONVIEW = JsonViewer;
   // add react router addon.
   router(map, config);
   return map.cook();

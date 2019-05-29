@@ -107,6 +107,11 @@ module.exports = {
     }),
     new CopyPlugin([
       { from: furmlyFonts, to: dist, flatten: true },
+      {
+        from: furmly + "\\webfonts\\*",
+        to: dist + "\\webfonts",
+        flatten: true
+      },
       { from: worker, to: dist, flatten: true }
     ])
   ],
