@@ -2,7 +2,6 @@
 $divider-color: rgba(0, 0, 0, 0.28);
 $divider-height: 0.0625rem;
 .sideMenuContainer {
-  // overflow-y: auto;
   height: 100%;
   position: relative;
   .user-controls {
@@ -11,9 +10,7 @@ $divider-height: 0.0625rem;
     bottom: 0;
     left: 0;
     width: 100%;
-    background: $background-color;
     border-top: $divider-height solid $divider-color;
-    box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, 0.12);
     padding: 16px;
     .logout {
       color: $accent-color;
@@ -26,6 +23,7 @@ $divider-height: 0.0625rem;
       float: left;
       fill: $accent-color;
       color: $accent-color;
+      margin-right: 20px;
     }
   }
   .actual-menu {
@@ -39,7 +37,7 @@ $divider-height: 0.0625rem;
       z-index: 1;
       padding: 12px 12px;
       display: block;
-      background: $background-color;
+      background: $background-color-secondary;
       color: $menu-label;
       &:after {
         content: "";
@@ -69,12 +67,13 @@ $divider-height: 0.0625rem;
           }
           background-color: $menu-selected;
         }
-        svg,.fas {
+        svg,
+        .fas {
           width: 14px;
           height: 14px;
           margin-right: 20px;
           fill: $menu-item-color;
-          color:$menu-item-color;
+          color: $menu-item-color;
         }
         padding-left: 16px;
         padding-top: 6px;

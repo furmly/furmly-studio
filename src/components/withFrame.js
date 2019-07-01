@@ -18,7 +18,7 @@ FrameProvider.propTypes = {
   value: PropTypes.object
 };
 export const withFrame = WrappedComponent => {
-  class ClientConsumer extends React.Component {
+  class FrameConsumer extends React.Component {
     render() {
       return (
         <FrameContext.Consumer>
@@ -27,12 +27,12 @@ export const withFrame = WrappedComponent => {
       );
     }
   }
-  hoistNonReactStatics(WrappedComponent, ClientConsumer);
-  return ClientConsumer;
+  hoistNonReactStatics(WrappedComponent, FrameConsumer);
+  return FrameConsumer;
 };
 
 export const withDrawer = WrappedComponent => {
-  class ClientConsumer extends React.Component {
+  class DrawerConsumer extends React.Component {
     render() {
       return (
         <FrameContext.Consumer>
@@ -41,6 +41,6 @@ export const withDrawer = WrappedComponent => {
       );
     }
   }
-  hoistNonReactStatics(WrappedComponent, ClientConsumer);
-  return ClientConsumer;
+  hoistNonReactStatics(WrappedComponent, DrawerConsumer);
+  return DrawerConsumer;
 };

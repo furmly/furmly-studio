@@ -3,15 +3,16 @@ import React from "react";
 import qs from "query-string";
 import { Icon } from "furmly-base-web";
 import PropTypes from "prop-types";
-import { Switch, Route } from "react-router-dom";
 import SideMenu from "components/SideMenu";
+import { Switch, Route } from "react-router-dom";
 import FurmlyControls from "furmly-controls";
-import Toast from "../../components/toast";
 import "./style.scss";
+import Toast from "../../components/toast";
 import { ipcSend } from "../../util";
 import Dispatcher from "../../../app/dispatcher";
 import ipcConstants from "../../../app/ipc-constants";
 import Dashboard from "../Dashboard";
+import { inputColor } from "../../theme";
 
 const Process = FurmlyControls.PROCESS;
 class Home extends React.Component {
@@ -29,9 +30,15 @@ class Home extends React.Component {
       [ipcConstants.STOP_PROXY],
       ipcSend
     );
+    this.removeSessionExpiredHandler = this.props.client.addEventListener(
+      this.props.client.SESSION_EXPIRED,
+      this.logout
+    );
   }
+
   componentWillUnmount() {
     this.dispatcher.destructor();
+    this.removeSessionExpiredHandler();
   }
   shouldComponentUpdate(nextProps, nextState) {
     if (
@@ -57,6 +64,10 @@ class Home extends React.Component {
       )
     );
   };
+  showMessage = message => {
+    Toast.show(<span className={`message ${message.category}`}>{message.message}</span>);
+  };
+
   completed = (nextProps, oldProps) => {
     let cancelled;
     const cancel = Toast.show(
@@ -85,7 +96,8 @@ class Home extends React.Component {
           Toast.show(
             <React.Fragment>
               <span>
-                <Icon icon={"home"} iconSize={18} color={"white"} />{" "}
+                <Icon icon={"home"} iconSize={18} color={"white"} />
+                &nbsp;
                 {"Taking you home ..."}
               </span>
             </React.Fragment>,
@@ -111,6 +123,8 @@ class Home extends React.Component {
                   currentStep={currentStep}
                   fetchParams={fetchParams}
                   processCompleted={this.completed}
+                  sessionExpired={this.logout}
+                  showMessage={this.showMessage}
                 />
               )}
             />
