@@ -21,6 +21,8 @@ const furmlyFonts = furmly + "\\*.ttf";
 const worker = furmly + "/worker.js";
 const dist = path.resolve(__dirname, "dist");
 const startArgs = JSON.parse(process.env.args || "[]");
+const ternWorker = path.join(__dirname, "./src/furmly/script/worker-tern.js");
+console.log(ternWorker);
 module.exports = {
   module: {
     rules: [
@@ -102,7 +104,19 @@ module.exports = {
         to: dist + "\\webfonts",
         flatten: true
       },
-      { from: worker, to: dist, flatten: true }
+      { from: worker, to: dist, flatten: true },
+      {
+        from: ternWorker,
+        to: dist,
+        flatten: true,
+        transform: function(content) {
+          return new Buffer(
+            content
+              .toString()
+              .replace("${port}", JSON.stringify(config.get("app.port")))
+          );
+        }
+      }
     ])
   ],
   resolve: {

@@ -12,7 +12,7 @@ import { ipcSend } from "../../util";
 import Dispatcher from "../../../app/dispatcher";
 import ipcConstants from "../../../app/ipc-constants";
 import Dashboard from "../Dashboard";
-import { inputColor } from "../../theme";
+
 
 const Process = FurmlyControls.PROCESS;
 class Home extends React.Component {
@@ -57,6 +57,9 @@ class Home extends React.Component {
         {},
         async (sender, closed) => {
           setTimeout(() => {
+            if (this.process) {
+              Process.clean();
+            }
             this.props.history.push("/");
             this.props.history.length = 0;
           }, 1000);
@@ -65,9 +68,13 @@ class Home extends React.Component {
     );
   };
   showMessage = message => {
-    Toast.show(<span className={`message ${message.category}`}>{message.message}</span>);
+    Toast.show(
+      <span className={`message ${message.category}`}>{message.message}</span>
+    );
   };
-
+  setProcess = process => {
+    this.process = process;
+  };
   completed = (nextProps, oldProps) => {
     let cancelled;
     const cancel = Toast.show(
@@ -120,6 +127,7 @@ class Home extends React.Component {
               component={({ match }) => (
                 <Process
                   id={match.params.processId}
+                  ref={this.setProcess}
                   currentStep={currentStep}
                   fetchParams={fetchParams}
                   processCompleted={this.completed}
