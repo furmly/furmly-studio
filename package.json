@@ -83,7 +83,7 @@
     "furmly-react-router-web-addons": "^1.0.0",
     "history": "^4.7.2",
     "hoist-non-react-statics": "^3.2.1",
-    "http-proxy": "^1.17.0",
+    "http-proxy": "^1.18.1",
     "jwt-decode": "^2.2.0",
     "prop-types": "^15.6.2",
     "query-string": "^6.3.0",
